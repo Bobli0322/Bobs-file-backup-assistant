@@ -21,7 +21,7 @@ Issue:
 It doesn't deal with duplicated files very well.
 
 Safety measures:
-It doesn't delete any files without asking for confirmation
-It doesn't copy and overwrite any files
-If there is any file name conflict during copying, it just adds a suffix to the original file name and copy to the new name
-When two files have same name different content, user to investigate if it's a naming conflict or a modified file
+- It doesn't delete any files without asking for confirmation.
+- It doesn't copy and overwrite any files.
+- If there is any file name conflict during copying, it just adds a suffix to the original file name and copy to the new name.
+- When two files have same name different content, user to investigate if it's a naming conflict or a modified file.
