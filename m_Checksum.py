@@ -179,7 +179,6 @@ def loadRecord(tableFile):#{0
         else:#{2
             if delim == '/':#{3
                 tt = read_table[0]
-                tt = tt.split(delim)
                 del tt[0]
                 if tt[len(tt)-1] == '':#{4
                     del tt[-1]
