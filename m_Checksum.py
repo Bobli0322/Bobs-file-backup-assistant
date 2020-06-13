@@ -177,8 +177,25 @@ def loadRecord(tableFile):#{0
             return 0
         #}2
         else:#{2
-            ret_table.append(read_table[0][1])
-            ret_table.append(read_table[0][2])
+            if delim == '/':#{3
+                tt = read_table[0]
+                tt = tt.split(delim)
+                del tt[0]
+                if tt[len(tt)-1] == '':#{4
+                    del tt[-1]
+                    del tt[-1]
+                #}4
+                else:#{4
+                    del tt[-1]
+                #}4
+                n1 = delim.join(tt)
+                ret_table.append(n1)
+                ret_table.append('')
+            #}3
+            else:#{3
+                ret_table.append(read_table[0][1])
+                ret_table.append(read_table[0][2])
+            #}3
             del read_table[-1]
             del read_table[0]
             for i in read_table:#{3
