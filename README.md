@@ -1,11 +1,15 @@
 # Bobs-file-backup-assistant
 This program assists in backup and maintain personal data files such as documents, pictures, and videos.
+It provides a suite of functionalities from tools like Rsync, fdupes, and md5deep.
+It's specifically effective when the user wants to root out duplicated files.
+If file duplication is a feature of the data, then existing tools like Rsync is much better.
 
 It's written in Python 3 with tkinter GUI.
 
-Most of testing was done in Windows 8.1, some in Linux.
+Most of testing was done in Windows 8.1 over a period of two years.
+It has also been tested successfully a couple of times on Linux.
 
-A self-contained windows executable is also provided.
+A self-contained windows executable is provided.
 
 Please build with terminal attached because terminal is used heavily to display information.
 
@@ -27,7 +31,7 @@ Issue:
     even if the two files are actually different files, but takes no action and require user investigation
 
 Advantages:
-- If a file is renamed at source, it's not be re-copied during backup sync operation, but simply renamed at destination.
+- If a file is renamed at source, it's not re-copied during backup sync operation, but simply renamed at destination.
 - There is extensive checksum functionality provided throughout, which is the most reliable way to compare two files.
 
 Safety measures:
