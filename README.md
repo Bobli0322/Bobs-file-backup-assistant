@@ -1,9 +1,11 @@
 # Bobs-file-backup-assistant
-This program assists in backup and maintain personal data files such as documents, pictures, and videos
+This program assists in backup and maintain personal data files such as documents, pictures, and videos.
 
-It's written in Python 3 with tkinter GUI
-A windows executable is also provided
-Please build with terminal attached because terminal is used heavily to display information
+It's written in Python 3 with tkinter GUI.
+
+A self-contained windows executable is also provided.
+
+Please build with terminal attached because terminal is used heavily to display information.
 
 This program is best suited for backup and maintain data files that have no duplication, like personal documents, pictures, and vidoes.
 Features include:
