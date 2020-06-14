@@ -4,9 +4,8 @@ It provides a suite of functionalities from tools like Rsync, fdupes, and md5dee
 It's specifically effective when the user wants to root out duplicated files.
 If file duplication is a feature of the data, then existing tools like Rsync is much better.
 
-This program is not suited for backup of program generated files where following condition may occur:
+This program is not suited for backup of program generated files or installation files where following condition may occur:
 - Duplicated files within a directory that have different file names
-- Different files within a directory that have exactly the same size and modification time
 
 It's written in Python 3 with tkinter GUI.
 
@@ -29,7 +28,6 @@ Features include:
 
 Limitations:
 - Backup sync and checksum record validation don't deal with duplicated files very well
-- Two files with the same size and modification time are considered to be the same for backup sync file comparison
 - If a file is moved at source, it's deleted and re-copied to new location at destination
 - If a folder is renamed, it's deleted and re-copied at destination
 - Checksum record validation sees files with same name, different checksum, different mod-time as potentially modified file,
@@ -43,4 +41,4 @@ Safety measures:
 - It doesn't delete any files without asking for confirmation.
 - It doesn't copy and overwrite any files.
 - If there is any file name conflict during copying, it just adds a suffix to the original file name and copy to the new name.
-- When two files have same name different content, user to investigate if it's a naming conflict or a modified file.
+- When multiple files use the same name, user to investigate if it's a naming conflict or a modified file.
