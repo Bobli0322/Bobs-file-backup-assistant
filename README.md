@@ -4,6 +4,10 @@ It provides a suite of functionalities from tools like Rsync, fdupes, and md5dee
 It's specifically effective when the user wants to root out duplicated files.
 If file duplication is a feature of the data, then existing tools like Rsync is much better.
 
+This program is not suited for backup of program generated files where following condition may occur:
+- Duplicated files within a directory that have different file names
+- Different files within a directory that have exactly the same size and modification time
+
 It's written in Python 3 with tkinter GUI.
 
 Most of testing was done in Windows 8.1 over a period of two years.
@@ -16,15 +20,16 @@ Please build with terminal attached because terminal is used heavily to display 
 This program is best suited for backup and maintain data files that have no duplication, like personal documents, pictures, and vidoes.
 Features include:
 - Backup sync
-- Detects files that haven't been copied or moved for more than 2 years, and delete them and re-copy
+- Detects files that haven't been copied or moved for more than 3 years, and delete them and re-copy
 - Finding and removing duplicated files (option to compare checksum)
 - Finding reused file names, and prompt user to investigate
 - Delete all instances of specified file or folder in target directory
 - Checksum comparison between two directories
 - Checksum record generation and validation
 
-Issue:
-- Backup sync and checksum record validation don't deal with duplicated files very well.
+Limitations:
+- Backup sync and checksum record validation don't deal with duplicated files very well
+- Two files with the same size and modification time are considered to be the same for backup sync file comparison
 - If a file is moved at source, it's deleted and re-copied to new location at destination
 - If a folder is renamed, it's deleted and re-copied at destination
 - Checksum record validation sees files with same name, different checksum, different mod-time as potentially modified file,
