@@ -46,13 +46,12 @@ class hashItem:#{0
     def __init__(self, key, name, mtime, count):#{1
         self.key = key
         self.fileName = name
-        self.rename = ''
+        self.rename = '' #to store new name
         self.modTime = mtime
-        self.valTime = 0 
+        self.valTime = 0 #record latest validation time (Not used)
         self.counter = count #for validation function
-        self.toRename = 0 
+        self.toRename = 0 #for renamed files
         self.toKeep = 0 
-        self.toReview = 0 
+        self.toReview = 0 #for modified or corrupted files
     #}1
 #}0
-

@@ -2,6 +2,7 @@ import datetime
 import time
 import os
 
+#It's better to put immutable here
 print('EXECUTING')
 cwd = os.getcwd()
 delim = ''

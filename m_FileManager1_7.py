@@ -63,7 +63,7 @@ import m_functions as func
 #       do checksum to verify data integrity
 #       checksum assume that src and dst are synced already
 #
-#       Have rename only sync mode 
+#       Have rename only sync mode (for use Rsync)
 #
 #       Create file compare function to allow choose compare method
 #       filecmp.cmp or hashlib
@@ -96,6 +96,10 @@ import m_functions as func
 # Additive syncing disregards aged files
 # because handling of aged files assumes both file remove and copy operation will be carried out
 # whereas additive sync does not do file remove
+#
+# Filecmp.cmp function only compare base on file size and mod-Time
+# Some program generate files with exactly same size and mod-Time
+# But are in fact different files with different content
 
 #Known bugs
 #1. When doing additive syncing
@@ -273,6 +277,8 @@ def filing(iMode, iCS):#{0
     global totalSrcCopy
     global totalDstRemove
     global totalDstRename
+    #totalSrcFile = 0
+    #totalDstFile = 0
     totalSrcCopy = 0
     totalDstRemove = 0
     totalDstRename = 0
@@ -656,6 +662,8 @@ def testSync(srcDir, dstDir):#{0
     #}1
     else:#{1
         print("Test failed")
+        #shutil.rmtree(testSrcDir[0], onerror=remove_readonly)
+        #shutil.rmtree(testDstDir[0], onerror=remove_readonly)
         return False
     #}1
 #}0
@@ -769,10 +777,9 @@ def compareNcopy(srcDir, dstDir):#{0
                             srcFsize = srcFileList[d][2]
                             srcDirFile = func.buildPath(srcDir, srcFileList[d][1], delim)
                             #return actual size which is same on different file system, not size on disk
-                            #srcFsize = os.path.getsize(srcDirFile)
                             #Investigate further about filecmp.cmp
                             if dstFsize == srcFsize:#{7
-                                #filecmp compare file content, indepedent of file system
+                                #filecmp compare primarily compare file size and modification time
                                 #3rd arg 0-filecmp, 1-hashlib
                                 if fCompare(dstDirFile, srcDirFile, cmp_Mode):#{8
                                     #If dstFile's creation date is longer than 2 years
@@ -784,8 +791,6 @@ def compareNcopy(srcDir, dstDir):#{0
                                     dstFileDateLst = dstFileDateTxt.split(' ')
                                     dstFileDateStr = dstFileDateLst[len(dstFileDateLst)-1]
                                     dstFileDateInt = int(dstFileDateStr) #assign dstFile creation year(int)
-                                    #Take current time assignment out of this function!!
-                                    #Put current time variable in global variable file
                                     fileAgeC = nowYr - dstFileDateInt
                                     dstFileDate = os.path.getatime(dstDirFile)
                                     dstFileDateTxt = time.ctime(dstFileDate)
@@ -844,7 +849,6 @@ def compareNcopy(srcDir, dstDir):#{0
             #Only empty of files, but there may be sub-folders
             if len(dstFileList) == 0:#{3
                 for c in range(len(srcFileList)):#{4
-                    #use fileOps.checkNcopy function to copy
                     checkNcopyList.append([srcDir, dstDir, srcFileList[c][1], srcFileList[c][1]])
                     totalSrcCopy = totalSrcCopy + 1 #Global variable
                 #}4
@@ -856,7 +860,6 @@ def compareNcopy(srcDir, dstDir):#{0
                     if not i in sameFileSrc:
                         srcToCopy.append(i)
                 for c in range(len(srcToCopy)):#{4
-                    #use fileOps.checkNcopy function to copy
                     checkNcopyList.append([srcDir, dstDir, srcToCopy[c][1], srcToCopy[c][1]])
                     totalSrcCopy = totalSrcCopy + 1 #Global variable
                 #}4
@@ -893,6 +896,7 @@ def backupCopy(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
         dstFolderList = []
         srcFolderList = []
         dstRemoved = []
+        #totalFiles = 0
         sameFolderSrc = []
 
         #Global variables reset
@@ -1057,6 +1061,12 @@ def backupCopy(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
             print("No issue encountered")
         #}2
         print('Analysis finished\n')
+        #print("copytreeList: " + str(copytreeList))
+        #print("rmtreeList: " + str(rmtreeList))
+        #print("renameList: " + str(renameList))
+        #print("removeList: " + str(removeList))
+        #print("checkNcopyList: " + str(checkNcopyList))
+        #print("agedFileList: " + str(agedFileList) + '\n')
         return 1
     #}1
 #}0
@@ -1083,7 +1093,7 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
         opCounter = 0
         cpCounter = 0
         dnCounter = 0
-        totalFiles = 0    
+        totalFiles = 0      
         for folderName, subFolders, fileNames in os.walk(targetDir):#{2
             for eDir in eList:#{3
                 if eDir in folderName:#{4
@@ -1113,6 +1123,13 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
             return ''
         #}2
         else:#{2
+            cMode = ''
+            if cmpMode == 0:#{3
+                cMode = 'Filecmp.cmp (file size + mod-time)'
+            #}3
+            else:#{3
+                cMode = 'Hashlib (Checksum:SHA256)'
+            #}3
             c = 0
             dupName = []
             dupList = []
@@ -1122,7 +1139,7 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
                 dir1 = nameList[c][0]
                 dir2 = nameList[nc][0]
                 file1 = nameList[c][1]     
-                file2 = nameList[nc][1]
+                file2 = nameList[nc][1] #file to be removed from nameList if same
                 mtime1 = nameList[c][2]
                 mtime2 = nameList[nc][2]
                 if file1 == file2:#{4
@@ -1160,7 +1177,7 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
                 df1 = func.buildPath(dir1, file1, delim)
                 df2 = func.buildPath(dir2, file2, delim)
                 if size1 == size2 and size1 != 0:#{4
-                    if fCompare(df1, df2, cmpMode):#{5
+                    if fCompare(df1, df2, cmpMode):#{5 cmpMode 0-filecmp, 1-hashlib
                         f1ct = os.path.getctime(df1) 
                         f2ct = os.path.getctime(df2)
                         f1at = os.path.getatime(df1)
@@ -1206,14 +1223,20 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
                     outputFile.write(i + '\n')
                 #}4
             #}3
+            outputFile.write('Method of file comparison: ' + cMode + '\n')
             outputFile.write('Total file count: ' + str(totalFiles) + '\n')
             outputFile.write('Comparison Ops: ' + str(opCounter) + '\n')
             outputFile.write('Duplicated files: ' + str(cpCounter) + '\n')
             outputFile.write('Duplicated fileNames: ' + str(dnCounter) + '\n')
+            outputFile.write('Only files with duplicated content are included in deletion\n')
+            outputFile.write('Duplicated file naming require user investigation\n')
             outputFile.close()
+            print('Method of file comparison: ' + cMode)
             print('Total file count: ' + str(totalFiles))
             print('Duplicated files: ' + str(cpCounter))
             print('Duplicated fileNames: ' + str(dnCounter))
+            print('Only files with duplicated content are included in deletion')
+            print('Duplicated file naming require user investigation')
             print('Please find analysis report in ' + cwd + delim + 'findDupFiles_report.txt')
             print('Analysis completed\n')
             ret = str(totalFiles) + '-' + str(dnCounter) + '-' + str(cpCounter)
@@ -1244,7 +1267,14 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
         dupList = []
         opCounter = 0
         cpCounter = 0
-        totalFiles = 0  
+        totalFiles = 0
+        cMode = ''
+        if cmpMode == 0:#{2
+            cMode = 'Filecmp.cmp (file size + mod-time)'
+        #}2
+        else:#{2
+            cMode = 'Hashlib (Checksum:SHA256)'
+        #}2
         print('Finding duplicated files within each sub-directory...') 
         for folderName, subFolders, fileNames in os.walk(targetDir):#{2
             fileList = []
@@ -1322,10 +1352,12 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
                 outputFile.write(i + '\n')
             #}3
         #}2
+        outputFile.write('Method of file comparison: ' + cMode + '\n')
         outputFile.write('Total file count: ' + str(totalFiles) + '\n')
         outputFile.write('Comparison Ops: ' + str(opCounter) + '\n')
         outputFile.write('Duplicated files: ' + str(cpCounter) + '\n')
         outputFile.close()
+        print('Method of file comparison: ' + cMode)
         print('Total file count: ' + str(totalFiles))
         print('Duplicated files: ' + str(cpCounter))
         print('Please find analysis report in ' + cwd + delim + 'findDupFiles_report.txt')
@@ -1408,7 +1440,6 @@ def delDirFile(wd, targetName, isFolder, exlDir):#{0
         #}2
         print('Number of instances found: ' + str(cpCounter))
         print('Analysis completed\n')
-        #This cpCounter should be rename to rmCounter
         return cpCounter
     #}1
 #}0

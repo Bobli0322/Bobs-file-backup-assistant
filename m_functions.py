@@ -15,6 +15,7 @@ def hasher(tar, isStr, hMode):#{0
         #}2
     #}1
     else:#{1
+        #blocksize = 4096
         blocksize = 65536
         if hMode == 'sha256':#{2
             hasher = hashlib.sha256()

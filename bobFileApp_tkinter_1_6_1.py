@@ -10,7 +10,7 @@ import queue, math, os
 
 #Ver 1.1 For the file backup function, delete files and folers in destination directory
 #       that do not exist in source directory, thus create a mirror between source and destination
-#       For remove duplicates function, remove duplicates base on file creation and access time,
+#       For remove duplicates function, remove duplicates base on file creation and access time
 #Ver 1.2 disable all buttons while file operation is happening
 #Ver 1.3 Put file opeartion on separate thread apart from GUI main loop
 #Ver 1.4 Add call_back function to catch when file operation thread finishes, to display results on screen
@@ -76,6 +76,8 @@ n = ttk.Notebook(window)
 n.grid(row=1, column=0, columnspan=50, rowspan=50, sticky='NESW')
 canvas0 = tk.Canvas(window, width=40, height=40, background="black")
 canvas0.grid(column=49, row=4, columnspan=1, sticky='NW')
+#canvas0.create_bitmap(17,17,bitmap=bitmaps[0])
+#canvas0.create_oval(3,3,30,30)
 canvas0.create_polygon(points, fill="red")
 f1 = ttk.Frame(n)
 f2 = ttk.Frame(n)
@@ -301,7 +303,6 @@ def formatPath(path):#{0
 #}0
 def callback():#{0
    global thread #Is this is inside a class then 'self.isThreaded'
-   #global opResult
    if thread == 1:#{1
       ret = opResult.get()
       #ret = 'Random'
@@ -409,7 +410,6 @@ def callback():#{0
    #}1
    else:#{1
       #print('isThreaded: ' + str(thread))
-      #window.update()
       point1 = points[0:2]
       point2 = points[2:4]
       point3 = points[4:6]
@@ -1214,7 +1214,6 @@ rdbtn42.config(state=tk.DISABLED)
 
 btn41 = tk.Button(f4, text='Analyse', bg='green',command=analyse_CSV)
 btn41.grid(column=1, row=12, sticky='N')
-#btn41.config(state=tk.DISABLED)
 
 btn42 = tk.Button(f4, text='Update', bg='green',command=update_CSV)
 btn42.grid(column=2, row=12, sticky='N')
@@ -1240,5 +1239,4 @@ print('Welcome to Bob\'s file management utility program')
 print('This console window helps user to monitor progress of file operation')
 print('Closing the console window will terminate the program immediately\n')
 
-#callback()  #Periodic function execution
 window.mainloop()

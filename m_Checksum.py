@@ -5,6 +5,10 @@ from m_gVar import * #contains global variables
 
 #Hash key, file name, modification date 
 
+#cwd = os.getcwd()
+#now = datetime.datetime.now()
+#now = str(now)
+
 #Nested loops
 def listFile(tar):#{0
     tempList = []
@@ -166,7 +170,6 @@ def loadRecord(tableFile):#{0
         ret_table = []
         csv_table = open(tableFile, 'r', encoding='utf8')
         read_table = csv.reader(csv_table, delimiter='/') #read_table is not a list
-        #i is a list
         read_table = list(read_table)
         headerStr = read_table[0][0]
         footerStr = read_table[-1][0]
@@ -469,6 +472,6 @@ def updateRecord(isPartial):#{0
 #
 #When loading CSV file, check header, footer, and everything inbetween is properly formatted
 #before doing anything else
-if __name__ == '__main__':
+if __name__ == '__main__':#{0
     print('standalone function')
-    
+#}0
