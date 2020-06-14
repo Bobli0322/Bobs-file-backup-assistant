@@ -63,7 +63,7 @@ import m_functions as func
 #       do checksum to verify data integrity
 #       checksum assume that src and dst are synced already
 #
-#       Have rename only sync mode (for use Rsync)
+#       Have rename only sync mode
 #
 #       Create file compare function to allow choose compare method
 #       filecmp.cmp or hashlib
