@@ -7,7 +7,11 @@ If file duplication is a feature of the data, then existing tools like Rsync is 
 This program is not suited for backup of program generated files or installation files where following condition may occur:
 - Duplicated files within a directory that have different file names
 
-It's written in Python 3 with tkinter GUI.
+It's written in Python 3 with tkinter GUI.\
+A **note** on file comparison function which sits at the heart of this program.\
+Filecmp.cmp(src,dst,shallow=False) is practically as good as compare checksums\
+If shallow option is omitted then it defaults to True which isn't totally reliable\
+because it only compares file metadata.\
 
 Most of testing was done in Windows 8.1 over a period of two years.
 It has also been tested successfully a couple of times on Linux.
@@ -26,18 +30,18 @@ Features include:
 - Checksum comparison between two directories
 - Checksum record generation and validation
 
-Limitations:
+**Limitations:**
 - Backup sync and checksum record validation don't deal with duplicated files very well
 - If a file is moved at source, it's deleted and re-copied to new location at destination
 - If a folder is renamed, it's deleted and re-copied at destination
 - Checksum record validation sees files with same name, different checksum, different mod-time as potentially modified file,
     even if the two files are actually different files, but takes no action and require user investigation
 
-Advantages:
+**Advantages:**
 - If a file is renamed at source, it's not re-copied during backup sync operation, but simply renamed at destination.
 - There is extensive checksum functionality provided throughout, which is the most reliable way to compare two files.
 
-Safety measures:
+**Safety measures:**
 - It doesn't delete any files without asking for confirmation.
 - It doesn't copy and overwrite any files.
 - If there is any file name conflict during copying, it just adds a suffix to the original file name and copy to the new name.
