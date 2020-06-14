@@ -540,6 +540,10 @@ def input_sync():#0
       else:#{2
          btn11.config(state=tk.DISABLED)
          btnClr1.config(state=tk.DISABLED)
+         rdbtn11.config(state=tk.DISABLED)
+         rdbtn12.config(state=tk.DISABLED)
+         rdbtn13.config(state=tk.DISABLED)
+         chkb1.config(state=tk.DISABLED)
          if iMode1 == 3:#{3
             tt = 'Mirror Syncing...\n'
          #}3
@@ -891,7 +895,11 @@ def update_CSV():#{0
    else:#{1
       ans = messagebox.askyesno('Confirmation', 'Start record validation?')
       if ans == True:#{2
-         disable_Btn()
+         #disable_Btn()
+         rdbtn41.config(state=tk.DISABLED)
+         rdbtn42.config(state=tk.DISABLED)
+         btn42.config(state=tk.DISABLED)
+         btnClr4.config(state=tk.DISABLED)
          threadObj4 = threading.Thread(target=task_upd, args=(var4Arg,))
          threadObj4.start()
          callback()
