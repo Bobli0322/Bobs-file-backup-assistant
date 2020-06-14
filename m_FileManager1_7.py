@@ -84,6 +84,9 @@ import m_functions as func
 #           - Computed value not found in table + same name + same mod time = corrupted file
 #              (This feature only update the CSV record file, does not copy or remove actual file)
 #           - include feature to detect duplicates in an existing record file
+#
+#       filecmp.cmp needs to include 'shallow=False' option for file content comparison
+#       otherwise filecmp.cmp only compare file metadata (os.stat)
 
 #Program quricks
 # Syncing will create additional duplicated files
@@ -96,10 +99,6 @@ import m_functions as func
 # Additive syncing disregards aged files
 # because handling of aged files assumes both file remove and copy operation will be carried out
 # whereas additive sync does not do file remove
-#
-# Filecmp.cmp function only compare base on file size and mod-Time
-# Some program generate files with exactly same size and mod-Time
-# But are in fact different files with different content
 
 #Known bugs
 #1. When doing additive syncing
@@ -111,7 +110,9 @@ import m_functions as func
 
 def fCompare(f1, f2, method):#{0
     if method == 0:#{1
-        return filecmp.cmp(f1, f2)
+        #filecmp shallow=True - compare file metadata(os.stat)
+        #filecmp shallow=False - compare file content (Recommanded)
+        return filecmp.cmp(f1, f2, shallow=False)
     #}1
     elif method == 1:#{1
         fileHash1 = func.hasher(f1, False, hash_Mode)
@@ -1125,7 +1126,7 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
         else:#{2
             cMode = ''
             if cmpMode == 0:#{3
-                cMode = 'Filecmp.cmp (file size + mod-time)'
+                cMode = 'Filecmp.cmp (file content)'
             #}3
             else:#{3
                 cMode = 'Hashlib (Checksum:SHA256)'
@@ -1270,7 +1271,7 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
         totalFiles = 0
         cMode = ''
         if cmpMode == 0:#{2
-            cMode = 'Filecmp.cmp (file size + mod-time)'
+            cMode = 'Filecmp.cmp (file content)'
         #}2
         else:#{2
             cMode = 'Hashlib (Checksum:SHA256)'
