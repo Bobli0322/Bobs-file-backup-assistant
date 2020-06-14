@@ -11,7 +11,7 @@ It's written in Python 3 with tkinter GUI.\
 A **note** on file comparison function which sits at the heart of this program.\
 Filecmp.cmp(src,dst,shallow=False) is practically as good as compare checksums\
 If shallow option is omitted then it defaults to True which isn't totally reliable\
-because it only compares file metadata.\
+because it only compares file metadata.
 
 Most of testing was done in Windows 8.1 over a period of two years.
 It has also been tested successfully a couple of times on Linux.
