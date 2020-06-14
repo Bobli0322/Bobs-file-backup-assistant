@@ -29,7 +29,7 @@ import queue, math, os
 #
 #Ver 1.6.1 (Operational tested)
 #        Minor bug fixes
-#        Have rename only sync mode(for use Rsync)
+#        Have rename only sync mode
 #        Checksum record generation and validation
 #        Exclude directories
 #        Report on files with same names
