@@ -1,4 +1,4 @@
 pyinstaller -F bobFileApp_tkinter_1_6_1.py
 
 pyinstaller -F' makes a self contained exe file
-DO NOT use any build option that would remove terminal window as this program depends heavily on terminal to display information
+Do not use any build option that would remove terminal window as this program depends heavily on terminal to display information
