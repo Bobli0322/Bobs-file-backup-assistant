@@ -1,0 +1,35 @@
+Bob file management assistant
+User manual
+The purpose of this application is to provide an integrated solution for backing up and maintaining 
+personal data such as pictures, documents, and video files. 
+This application aids user in creating a personal data store that is free of duplication and reused file names. 
+Following is the steps to effectively use this application.
+
+1. Remove duplication (Remove duplicates tab)
+     - Remove duplicates locally within each sub-directories in the target directory
+     - Remove duplicates globally across all sub-directories in the target directory
+     - Use compare checksum option to validate results (optional)
+     - Files that have the same names are not included in removal,
+ 	  user can investigate to see if it’s a naming conflict or modified file,
+	  and manually resolve the issue.
+         Reused file naming does not hinder backup operation or checksum record validation
+
+2. Before backup operation, create a checksum record file (.CSV)
+	from the directory that is getting backed up (Checksum tab)
+	If program crashes during record generation process, user can continue from the unfinished
+	record file by specifying the CSV file for “Continue from”.
+
+3. After successfully creating the checksum record, it can be validated and updated
+       against a previously created record of the same files, 
+	and discover possible discrepancy and data corruption. 
+	If the newly generated record only represent part of the original record,
+	then partial update should be used to prevent deletion of entries in original record.
+	This function cannot automatically resolve data corruption or modification issues, 
+       it provides enough information so the user can investigate and manually resolve issues.
+
+4. After all the issues are resolved, the files can now be backed up to the backup storage device.
+	(File Backup tab)
+	- The Checksum checkbox in “File Backup” tab is to validate the copied files
+	   against the original files after the backup sync operation.
+	- The Checksum button in “File Backup” tab is to validate the “Backup from” directory
+	   against the “Backup to” directory. 
