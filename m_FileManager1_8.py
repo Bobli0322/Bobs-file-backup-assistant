@@ -947,12 +947,6 @@ def compareNcopy(srcDir, dstDir):#{0
                                         sameFileSrc.append(srcObjList[d]) #file that is the same
                                         break
                                     #}9
-                                    #file is sub-sequently removed
-                                    #file is not added to sameFileSrc list
-                                    #and sub-sequently copied to dst
-                                    #This else clause is un-tested!!
-                                    #does not deal with aged files that need to be renamed!!!
-                                    #because aged file is removed, and new src file copied
                                 #}8
                             #}7
                             elif srcFsize > dstFsize:#{7
