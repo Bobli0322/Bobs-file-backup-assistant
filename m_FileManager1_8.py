@@ -90,25 +90,8 @@ import m_functions as func
 #
 #       allowing program to detect duplicated file and sync
 
-#Program quricks
-# Syncing will create additional duplicated files
-# if there are already duplicated files in src or dst before sync
-# Additive sync will create duplicated files
-# when aged files in dst has different names from their cooresponding src files
-# Solution is to remove duplicated files
-# before and after sync from both src and dst
-#
-# Additive syncing disregards aged files
-# because handling of aged files assumes both file remove and copy operation will be carried out
-# whereas additive sync does not do file remove
-
-#Known bugs
-#1. When doing additive syncing
-#     if an aged file's name differs between src and dst
-#     the src file with different name still copy to dst
-#     result is two copies of the same file in dst
-#     one with its src file name, one with dst file name
-#     use remove duplicated file to delete the older file
+#Known limitations
+#1. Validation of checksum record disallow duplicated files
 
 def fCompare(f1, f2, method):#{0
     if method == 0:#{1
