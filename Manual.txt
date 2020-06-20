@@ -10,14 +10,14 @@ Following is the steps to effectively use this application.
      - Remove duplicates globally across all sub-directories in the target directory
      - Use compare checksum option to validate results (optional)
      - Files that have the same names are not included in removal,
- 	  user can investigate to see if it’s a naming conflict or modified file,
+ 	  user can investigate to see if itâ€™s a naming conflict or modified file,
 	  and manually resolve the issue.
          Reused file naming does not hinder backup operation or checksum record validation
 
 2. Before backup operation, create a checksum record file (.CSV)
 	from the directory that is getting backed up (Checksum tab)
 	If program crashes during record generation process, user can continue from the unfinished
-	record file by specifying the CSV file for “Continue from”.
+	record file by specifying the CSV file for â€œContinue fromâ€.
 
 3. After successfully creating the checksum record, it can be validated and updated
        against a previously created record of the same files, 
@@ -29,7 +29,7 @@ Following is the steps to effectively use this application.
 
 4. After all the issues are resolved, the files can now be backed up to the backup storage device.
 	(File Backup tab)
-	- The Checksum checkbox in “File Backup” tab is to validate the copied files
-	   against the original files after the backup sync operation.
-	- The Checksum button in “File Backup” tab is to validate the “Backup from” directory
-	   against the “Backup to” directory. 
+	- The Checksum checkbox in â€œFile Backupâ€ tab is to validate the copied files
+	   against the original files after file transfer.
+	- The Checksum button in â€œFile Backupâ€ tab is to validate the â€œBackup fromâ€ directory
+	   against the â€œBackup toâ€ directory. 
