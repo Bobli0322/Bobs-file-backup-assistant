@@ -1,4 +1,11 @@
-
+class iFile:#{0
+    def __init__(self, numb, fNames, fDir, fSize):#{1
+        self.num = numb
+        self.fileNames = fNames
+        self.fileDir = fDir
+        self.fileSize = fSize
+    #}1
+#}0
 class entity:#{0
     def __init__(self, srcDir, dstDir, delim):#{1
         if srcDir == dstDir:#{2

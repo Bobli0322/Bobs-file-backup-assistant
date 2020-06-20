@@ -48,7 +48,7 @@ def hasher(tar, isStr, hMode):#{0
     #}1
 #}0
 def buildPath(path1, path2, delim):#{0
-    retStr = ''
+    #retStr = ''
     if type(path1) == list:#{1
         retStr = delim.join(path1)
     #}1
