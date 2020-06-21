@@ -21,18 +21,16 @@ Features include:
 - Finding reused file names, and prompt user to investigate
 - Delete all instances of specified file or folder in target directory
 - Checksum comparison between two directories
-- Checksum record generation and validation
+- Checksum record generation, validation, and update
 
 **Limitations:**
 - Checksum record validation disallow duplicated files
 - If a file is moved at source, it's deleted and re-copied to new location at destination
 - If a folder is renamed, it's deleted and re-copied at destination
-- Checksum record validation sees files with same name, different checksum, different mod-time as potentially modified file,
-    even if the two files are actually different files, but takes no action and require user investigation
 
 **Advantages:**
 - If a file is renamed at source, it's not re-copied during backup sync operation, but simply renamed at destination.
-- There is extensive checksum functionality provided throughout, which is the most reliable way to compare two files.
+- There is extensive checksum functionality provided throughout.
 
 **Safety measures:**
 - It doesn't delete any files without asking for confirmation.
