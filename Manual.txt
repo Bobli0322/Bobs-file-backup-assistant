@@ -12,7 +12,7 @@ Following is the steps to effectively use this application.
      - Files that have the same names are not included in removal,
  	  user can investigate to see if it’s a naming conflict or modified file,
 	  and manually resolve the issue.
-         Reused file naming does not hinder backup operation or checksum record validation
+         Reused file naming does not hinder backup operation or checksum record validation and update
 
 2. Before backup operation, create a checksum record file (.CSV)
 	from the directory that is getting backed up (Checksum tab)
@@ -25,7 +25,9 @@ Following is the steps to effectively use this application.
 	If the newly generated record only represent part of the original record,
 	then partial update should be used to prevent deletion of entries in original record.
 	This function cannot automatically resolve data corruption or modification issues, 
-       it provides enough information so the user can investigate and manually resolve issues.
+	it provides enough information so the user can investigate and manually resolve issues.
+		- If file is modified, user needs to re-generate its checksum and update record manually
+		- If file is corrupted, user needs to re-copy the file from backup storage
 
 4. After all the issues are resolved, the files can now be backed up to the backup storage device.
 	(File Backup tab)
