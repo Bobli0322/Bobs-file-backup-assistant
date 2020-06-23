@@ -129,11 +129,10 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
             #}3
             if isExl == True:#{3
                 isExl = False
-                continue
             #}3
             else:#{3
                 for fileName in fileNames:#{4
-                    if fileName != thumbs:#{5
+                    if fileName.lower() != thumbs.lower():#{5
                         totalFiles = totalFiles + 1
                         tPath = func.buildPath(folderName, fileName, delim)
                         fSize = os.path.getsize(tPath)
@@ -314,11 +313,10 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
             #}3
             if isExl == True:#{3
                 isExl = False
-                continue
             #}3
             else:#{3
                 for fileName in fileNames:#{4
-                    if fileName != thumbs:#{5
+                    if fileName.lower() != thumbs.lower():#{5
                         totalFiles = totalFiles + 1
                         fsize = os.path.getsize(func.buildPath(folderName, fileName, delim))
                         fileList.append([fileName,fsize])

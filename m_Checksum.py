@@ -9,50 +9,6 @@ from m_gVar import * #contains global variables
 #now = datetime.datetime.now()
 #now = str(now)
 
-#Nested loops
-def listFile(tar):#{0
-    tempList = []
-    tempList2= []
-    fList = []
-    fileList = []
-    elements = os.listdir(tar)
-    if len(elements) != 0:#{1
-        for e in elements:#{2
-            f = tar + delim + e
-            #print(f)
-            if os.path.isdir(f):#{3
-                #fg = f[1:]
-                fList.append(f)
-                tempList.append(f)
-                #listSrc(f)
-            #}3
-            elif os.path.isfile(f):#{3
-                fileList.append(f)
-            #}3
-        #}2
-    #}1
-    while len(tempList) != 0:#{1
-        tempList2 = tempList[:] #list slicing is faster than copy.copy
-        tempList.clear()
-        for i in tempList2:#{2
-            elements = os.listdir(i)
-            if len(elements) != 0:#{3
-                for j in elements:#{4
-                    f = i + delim + j
-                    #print(f)
-                    if os.path.isdir(f):#{5
-                        fList.append(f)
-                        tempList.append(f)
-                    #}5
-                    elif os.path.isfile(f):#{5
-                        fileList.append(f)
-                    #}5
-                #}4
-            #}3
-        #}2
-    #}1
-    return fileList
-#}0
 def mergeRecord(tarDir, merFile, fileList):#{0
     if not os.path.isfile(merFile):#{1
         print('Merge file not found')
@@ -94,7 +50,8 @@ def mergeRecord(tarDir, merFile, fileList):#{0
 #}0
 #Load data from file and opt for CSV record generation
 def genRecord(tarDir, merFile):#{0
-    file_list = listFile(tarDir)
+    exDir = []
+    file_list = func.listFile(tarDir, delim, exDir, thumbs)
     if len(file_list) == 0:#{1
         print('Target directory is empty')
         return 0

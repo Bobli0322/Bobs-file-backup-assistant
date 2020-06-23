@@ -34,11 +34,14 @@ import queue, math, os
 #Ver 1.6.1 (Operational tested)
 #        Minor bug fixes
 #        Have rename only sync mode
-#        Checksum record generation and validation
+#        Checksum record generation, validation, and update
 #        Exclude directories
 #        Report on files with same names
 #
 #Ver 1.7 Allow detection of sync of duplicated files
+#        check file age base on creation and access time and report
+#           - copied file update creation time
+#           - moved file update access time
 
 #Degree value must convert to radina before calculation
 #|a0 b0| |x|
@@ -67,7 +70,7 @@ def rotatePoint(ori, point, angle):#{0
 
 window = tk.Tk()
 window.title('Bob\'s File Manager')
-window.geometry('565x550')
+window.geometry('580x550')
 bitmaps = ["hourglass", "question", "warning"]
 points = [11,11,11,33,33,33,33,11]
 oriPoint = (22,22)
@@ -132,6 +135,7 @@ print('Delimiter: ' + fsc.delim) #delim is in m_gVar which fsc module includes
 
 #----------------General functions----------------------------
 def disable_Btn():#{0
+   btnChkAge.config(state=tk.DISABLED)
    btn1.config(state=tk.DISABLED)
    btn12.config(state=tk.DISABLED)
    btn2.config(state=tk.DISABLED)
@@ -185,6 +189,7 @@ def disable_Btn():#{0
    btn42.config(state=tk.DISABLED)
 #}0
 def enable_Btn():#{0
+   btnChkAge.config(state=tk.NORMAL)
    btn1.config(state=tk.NORMAL)
    btn12.config(state=tk.NORMAL)
    btn2.config(state=tk.NORMAL)
@@ -347,6 +352,13 @@ def callback():#{0
       canvas0.create_polygon(points, fill="red")
       enable_Btn()
    #}1
+   elif thread == 13:#{1
+      txt1.insert(tk.END, 'Age checking completed\n\n')
+      thread = 0
+      canvas0.delete("all")
+      canvas0.create_polygon(points, fill="red")
+      enable_Btn()
+   #}1
    elif thread == 2:#{1
       ret = opResult.get()
       if ret != '':#{2
@@ -464,6 +476,11 @@ def taskF12(srcStr, dstStr, exlSrcStr, exlDstStr):#{0
    opResult.put(fsc.validate(srcStr, dstStr, exlSrcStr, exlDstStr))
    thread = 12
 #}0
+def taskF13(dstArg, exlDstArg):#{0
+   global thread
+   fsc.checkAge(dstArg, exlDstArg)
+   thread = 13
+#}0
 def clear_Fields():#{0
    txt1.delete(1.0, tk.END)
    entrySrc1.delete(0, tk.END)
@@ -521,7 +538,6 @@ def input_Checksum():#{0
    exlDstArg = str(exlDstStr.get())
    #print(srcArg)
    #print(dstArg)
-   #text1.insert(tk.END, tStr)
    if srcArg == '' or dstArg == '':#{1
       messagebox.showinfo('Error', 'Please input both src and dst field')
    #}1
@@ -544,7 +560,6 @@ def input_Checksum():#{0
          txt1.insert(tk.END, 'Checksum ...\n')
          txt1.insert(tk.END, srcArg + ' >> ' + dstArg + '\n')
          threadObj1 = threading.Thread(target=taskF12, args=(srcArg, dstArg, exlSrcArg, exlDstArg))
-         #threadObj1.daemon = True
          threadObj1.start()
          callback()
       #}2
@@ -588,7 +603,6 @@ def input_Valid():#{0
     exlDstArg = str(exlDstStr.get())
     #print(srcArg)
     #print(dstArg)
-    #text1.insert(tk.END, tStr)
     if srcArg == '' or dstArg == '':#{1
         messagebox.showinfo('Error', 'Please input both src and dst field')
     #}1
@@ -615,11 +629,43 @@ def input_Valid():#{0
             txt1.insert(tk.END, 'Analysing...\n')
             txt1.insert(tk.END, srcArg + ' >> ' + dstArg + '\n')
             threadObj1 = threading.Thread(target=taskF1, args=(srcArg, dstArg, exlSrcArg, exlDstArg))
-            #threadObj1.daemon = True
             threadObj1.start()
             callback()
         #}2
     #}1
+#}0
+def chk_Age():#{0
+   dstArg = str(dstStr.get())
+   exlDstArg = str(exlDstStr.get())
+   #print(dstArg)
+   if dstArg == '':#{1
+      messagebox.showinfo('Error', 'Please input dst field')
+   #}1
+   elif validArg0(dstArg, '') == 0:#{1
+      messagebox.showinfo('Error', 'Please input valid pathname')
+   #}1
+   elif not os.path.isdir(dstArg):#{1
+      messagebox.showinfo('Error', 'directory not found')
+   #}1
+   elif validArg(exlDstArg) == 0:#{1
+      messagebox.showinfo('Error', 'Input parameter invalid')
+   #}1
+   #os.X_OK, os.W_OK, os.R_OK
+   elif not os.access(dstArg, os.X_OK):#{1
+      messagebox.showinfo('Error', 'not enough access right')
+   #}1
+   else:#{1
+      ans = messagebox.askyesno('Confirmation', 'Start age check?')
+      if ans == True:#{2
+         disable_Btn()
+         txt1.insert(tk.END, 'Checking file age...\n')
+         txt1.insert(tk.END, 'Target directory: ' + dstArg + '\n')
+         #txt1.insert(tk.END, 'Excluding: ' + exlDstArg + '\n')
+         threadObj1 = threading.Thread(target=taskF13, args=(dstArg, exlDstArg))
+         threadObj1.start()
+         callback()
+      #}2
+   #}1
 #}0
 #-----------End of Frame 1 functions--------------------------------
 
@@ -680,50 +726,50 @@ def input_dup():#{0
    #}1
 #}0    
 def input_Valid2():#{0
-    iMode2 = var25.get()
-    iCS = var26.get()
-    exl2Arg = str(exl2Str.get())
-    tarArg = str(tar2Str.get())
-    if tarArg == '':#{1
-        messagebox.showinfo('Error', 'Please input target directory')
-    #}1
-    elif validArg0(tarArg, '') == 0:#{1
-        messagebox.showinfo('Error', 'Please input valid pathname')
-    #}1
-    elif iMode2 == 0:#{1
-        messagebox.showinfo('Error', 'Please select operation mode')
-    #}1
-    elif not os.path.isdir(tarArg):#{1
-        messagebox.showinfo('Error', 'directory not found')
-    #}1
-    elif validArg(exl2Arg) == 0:#{1
-        messagebox.showinfo('Error', 'Input parameter invalid')
-    #}1
-    elif not os.access(tarArg, os.X_OK):
-        messagebox.showinfo('Error', 'not enough access right')
-    #}1
-    elif not rdup.testDup(tarArg, iMode2, iCS):#{1
-        messagebox.showinfo('Error', 'core function test failed')
-    #}1
-    else:#{1
-        ans = messagebox.askyesno('Confirmation', 'Start analysis?')
-        if ans == True:#{2
-            disable_Btn()
-            totalFiles = 0
-            opCounter = 0
-            cpCounter = 0
-            txt2.insert(tk.END, 'Analysing duplicated files...\n')
-            if iMode2 == 1:#{3
-                txt2.insert(tk.END, 'Global mode\n')
-            #}3
-            elif iMode2 == 2:#{3
-                txt2.insert(tk.END, 'Local mode\n')
-            #}3
-            threadObj2 = threading.Thread(target=taskF2, args=(tarArg, iMode2, iCS, exl2Arg))
-            threadObj2.start()
-            callback()
-        #}2
-    #}1
+   iMode2 = var25.get()
+   iCS = var26.get()
+   exl2Arg = str(exl2Str.get())
+   tarArg = str(tar2Str.get())
+   if tarArg == '':#{1
+      messagebox.showinfo('Error', 'Please input target directory')
+   #}1
+   elif validArg0(tarArg, '') == 0:#{1
+      messagebox.showinfo('Error', 'Please input valid pathname')
+   #}1
+   elif iMode2 == 0:#{1
+      messagebox.showinfo('Error', 'Please select operation mode')
+   #}1
+   elif not os.path.isdir(tarArg):#{1
+      messagebox.showinfo('Error', 'directory not found')
+   #}1
+   elif validArg(exl2Arg) == 0:#{1
+      messagebox.showinfo('Error', 'Input parameter invalid')
+   #}1
+   elif not os.access(tarArg, os.X_OK):
+      messagebox.showinfo('Error', 'not enough access right')
+   #}1
+   elif not rdup.testDup(tarArg, iMode2, iCS):#{1
+      messagebox.showinfo('Error', 'core function test failed')
+   #}1
+   else:#{1
+      ans = messagebox.askyesno('Confirmation', 'Start analysis?')
+      if ans == True:#{2
+         disable_Btn()
+         totalFiles = 0
+         opCounter = 0
+         cpCounter = 0
+         txt2.insert(tk.END, 'Analysing duplicated files...\n')
+         if iMode2 == 1:#{3
+            txt2.insert(tk.END, 'Global mode\n')
+         #}3
+         elif iMode2 == 2:#{3
+            txt2.insert(tk.END, 'Local mode\n')
+         #}3
+         threadObj2 = threading.Thread(target=taskF2, args=(tarArg, iMode2, iCS, exl2Arg))
+         threadObj2.start()
+         callback()
+      #}2
+   #}1
 #}0            
 #-------------End of Frame 2 functions----------------------------------
 
@@ -1035,10 +1081,13 @@ btn12 = tk.Button(f1, text='Checksum', bg='orange',command=input_Checksum)
 btn12.grid(column=0, row=8, sticky='S')
 
 btnExlSrc = tk.Button(f1, text='Exclude', bg='purple',command=browse_ExlSrc)
-btnExlSrc.grid(column=5, row=4, sticky='N')
+btnExlSrc.grid(column=5, row=4, sticky='W')
 
 btnExlDst = tk.Button(f1, text='Exclude', bg='purple',command=browse_ExlDst)
-btnExlDst.grid(column=5, row=6, sticky='N')
+btnExlDst.grid(column=5, row=6, sticky='W')
+
+btnChkAge = tk.Button(f1, text='Check Age', bg='grey',command=chk_Age)
+btnChkAge.grid(column=5, row=7, sticky='NW')
 
 # Text field
 txt1 = tk.Text(master=f1, height=20, width=50)

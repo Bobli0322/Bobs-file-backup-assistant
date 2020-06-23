@@ -1,7 +1,80 @@
+import os
 import hashlib
 import filecmp
 import m_class_entity as entityc
 
+#Nested loops
+#Return a list that contains file path for tar(target dir)
+#excluding dir path in exlDir
+def listFile(tar, delim, exlDir, thumbs):#{0
+    tempList = []
+    tempList2= []
+    fList = []
+    fileList = []
+    isExDir = False
+    elements = os.listdir(tar)
+    exDir = listExl(exlDir, delim)
+    if len(elements) != 0:#{1
+        for e in elements:#{2
+            if e.lower() != thumbs.lower():#{3
+                f = tar + delim + e
+                for edDir in exDir:#{4
+                    if edDir in f:#{5
+                        isExDir = True
+                    #}5
+                #}4
+                if isExDir == True:#{4
+                    isExDir = False
+                #}4
+                else:#{4
+                    #print(f)
+                    if os.path.isdir(f):#{5
+                        #fg = f[1:]
+                        fList.append(f)
+                        tempList.append(f)
+                        #listSrc(f)
+                    #}5
+                    elif os.path.isfile(f):#{5
+                        fileList.append(f)
+                    #}5
+                #}4
+            #}3
+        #}2
+    #}1
+    while len(tempList) != 0:#{1
+        tempList2 = tempList[:] #list slicing is faster than copy.copy
+        tempList.clear()
+        for i in tempList2:#{2
+            elements = os.listdir(i)
+            if len(elements) != 0:#{3
+                for j in elements:#{4
+                    if j.lower() != thumbs.lower():#{5
+                        f = i + delim + j
+                        for edDir in exDir:#{6
+                            if edDir in f:#{7
+                                isExDir = True
+                            #}7
+                        #}6
+                        if isExDir == True:#{6
+                            isExDir = False
+                        #}6
+                        else:#{6
+                            #print(f)
+                            if os.path.isdir(f):#{7
+                                fList.append(f)
+                                tempList.append(f)
+                            #}7
+                            elif os.path.isfile(f):#{7
+                                fileList.append(f)
+                            #}7
+                        #}6
+                    #}5
+                #}4
+            #}3
+        #}2
+    #}1
+    return fileList
+#}0
 def hasher(tar, isStr, hMode):#{0
     if isStr == True:#{1
         if hMode == 'sha256':#{2

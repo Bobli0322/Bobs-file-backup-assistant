@@ -119,7 +119,6 @@ def delDirFile(wd, targetName, isFolder, exlDir):#{0
             #}3
             if isExl == True:#{3
                 isExl = False
-                continue
             #}3
             else:#{3
                 tWorkFolder = folderName.split(delim)

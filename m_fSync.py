@@ -3,6 +3,59 @@ import m_FileOps1_1 as fOps
 import m_class_entity as entityc
 import m_functions as func
 
+#Reports on age of files in tarDir
+#base on creation and access time
+def checkAge(tarDir, exDir):#{0
+    #under 1yr, >1yr, >2yr, >3yr, >4yr, >5yr
+    ageList = [0, 0, 0, 0, 0, 0]
+    perList = []
+    file_list = func.listFile(tarDir, delim, exDir, thumbs)
+    totalFile = len(file_list)
+    for i in file_list:#{1
+        ct = os.path.getctime(i)
+        ctt = time.ctime(ct)
+        ctt = ctt.split(' ')
+        ctt = int(ctt[len(ctt)-1])
+        at = os.path.getatime(i)
+        att = time.ctime(at)
+        att = att.split(' ')
+        att = int(att[len(att)-1])
+        if att > ctt:#{2
+            diffYr = nowYr - att
+        #}2
+        else:#{2
+            diffYr = nowYr - ctt
+        #}2
+        if diffYr < len(ageList)-1:#{2
+            ageList[diffYr] = ageList[diffYr] + 1
+            #if diffYr == 3:
+            #    print(i)
+        #}2
+        elif diffYr >= len(ageList)-1:#{2
+            ageList[len(ageList)-1] = ageList[len(ageList)-1] + 1
+        #}2
+    #}1
+    for i in ageList:#{1
+        tt = (i/totalFile)*100
+        tts = tt + 0.5
+        if int(tts) == int(tt):#{2
+            tt = int(tt)
+        #}2
+        else:#{2
+            tt = int(tt+1)
+        #}2
+        perList.append(int(tt))
+    #}1
+    print('File age report on: ' + tarDir)
+    print('Excluding: ' + exDir)
+    print('Total number of files: ' + str(totalFile))
+    print('Files under 1 year old: ' + str(ageList[0]) + '~' + str(perList[0]) + '%')
+    print('Files 1 year old: ' + str(ageList[1]) +  '~' + str(perList[1]) + '%')
+    print('Files 2 years old: ' + str(ageList[2]) +  '~' + str(perList[2]) + '%')
+    print('Files 3 years old: ' + str(ageList[3]) +  '~' + str(perList[3]) + '%')
+    print('Files 4 years old: ' + str(ageList[4]) +  '~' + str(perList[4]) + '%')
+    print('Files 5 years or older: ' + str(ageList[5]) +  '~' + str(perList[5]) + '%')
+#}0
 #Generate checksum for each and compare them one at a time
 #instead of whole list compare
 def validate(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
@@ -794,7 +847,6 @@ def backupCopy(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
             #}3
             if isExlDst == True:#{3
                 isExlDst = False
-                continue
             #}3
             else:#{3
                 tWorkFolder = folderName.split(delim)
@@ -817,7 +869,6 @@ def backupCopy(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
             #}3
             if isExlSrc == True:#{3
                 isExlSrc = False
-                continue
             #}3
             else:#{3
                 tWorkFolder = folderName.split(delim)

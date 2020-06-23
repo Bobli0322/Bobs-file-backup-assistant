@@ -85,6 +85,10 @@ import os, shutil, filecmp
 #       allowing program to detect duplicated file and sync
 #
 #       Detect which OS program is running on and adapt
+#
+#       check file age base on creation and access time and report
+#       - copied file update creation time
+#       - moved file update access time
 
 #Limitations
 #1. Checksum record validation disallow duplicated files
