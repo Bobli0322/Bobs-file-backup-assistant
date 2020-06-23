@@ -22,6 +22,7 @@ Features include:
 - Delete all instances of specified file or folder in target directory
 - Checksum comparison between two directories
 - Checksum record generation, validation, and update
+- Check age of files base on creation and access time and report
 
 **Limitations:**
 - Checksum record validation disallow duplicated files
