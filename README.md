@@ -25,6 +25,7 @@ Features include:
 - Check age of files base on creation and access time and report
 
 **Limitations:**
+- Syncing files is very slow 
 - Checksum record validation disallow duplicated files
 - If a file is moved at source, it's deleted and re-copied to new location at destination
 - If a folder is renamed, it's deleted and re-copied at destination
