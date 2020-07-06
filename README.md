@@ -11,7 +11,8 @@ So two separate files have same size and modification time, even if file name an
 the default filecmp.cmp function (shallow=True) still returns True.\
 The downside is for large files, it takes a long time to compare file content.
 
-Tested on Windows 8.1 and Linux.
+Tested on Windows 8.1.\
+May also work on Linux.
 
 A self-contained windows executable is provided.
 
@@ -31,6 +32,7 @@ Features include:
 - In certain situations like if there are lots of renamed files, or files that have same size and modification time but different content,
   the backup sync file comparison process could take a long time if file sizes are large because in this case, the program compares files by its content
 - Checksum record validation disallow duplicated files
+- Checksum recording doesn't work in Linux
 - If a file is moved at source, it's deleted and re-copied to new location at destination
 - If a folder is renamed, it's deleted and re-copied at destination
 
