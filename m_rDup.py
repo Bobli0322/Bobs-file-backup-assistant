@@ -151,7 +151,7 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
         else:#{2
             cMode = ''
             if cmpMode == 0:#{3
-                cMode = 'Filecmp.cmp (file content)'
+                cMode = 'Filecmp.cmp (shallow=False compare file content)'
             #}3
             else:#{3
                 cMode = 'Hashlib (Checksum:SHA256)'
@@ -204,7 +204,7 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
                 df2 = func.buildPath(dir2, file2, delim)
                 #cmpMode 0-filecmp, 1-hashlib
                 if size1 == size2 and size1 != 0:#{4
-                    if func.fCompare(df1, df2, cmpMode):#{5 
+                    if func.fCompare(df1, df2, cmpMode, hash_Mode, False):#{5 
                         f1ct = os.path.getctime(df1) 
                         f2ct = os.path.getctime(df2)
                         f1at = os.path.getatime(df1)
@@ -297,7 +297,7 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
         totalFiles = 0
         cMode = ''
         if cmpMode == 0:#{2
-            cMode = 'Filecmp.cmp (file content)'
+            cMode = 'Filecmp.cmp (shallow=False compare file content)'
         #}2
         else:#{2
             cMode = 'Hashlib (Checksum:SHA256)'
@@ -334,7 +334,7 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
                         size1 = fileList[c][1]
                         size2 = fileList[nc][1]
                         if size1 == size2 and size1 != 0:#{6
-                            if func.fCompare(ff1, ff2, cmpMode):#{7
+                            if func.fCompare(ff1, ff2, cmpMode, hash_Mode, False):#{7
                                 #File with the latest creation time or access time is kept
                                 f1ct = os.path.getctime(ff1)
                                 f1at = os.path.getatime(ff1)

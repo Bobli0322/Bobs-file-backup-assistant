@@ -2,6 +2,7 @@ from m_gVar import * #contains global variables
 import m_FileOps1_1 as fOps
 import m_class_entity as entityc
 import m_functions as func
+from operator import itemgetter
 
 #Reports on age of files in tarDir
 #base on creation and access time
@@ -461,23 +462,24 @@ def loadFileObj(fileList, objList, isDup):#{0
         fstr0 = fileList[c][0] + delim + fileList[c][1]
         fsize1 = fileList[nc][2]
         fstr1 = fileList[nc][0] + delim + fileList[nc][1]
-        if fsize0 == fsize1:#{2
-            if func.fCompare(fstr0, fstr1, cmp_Mode):#{3
-                #print(fstr0 + ' == ' + fstr1)
-                if size == 0:#{4
-                    size = fsize0
-                #}4
-                if fDir == '':#{4
-                    fDir = fileList[c][0]
-                #}4
-                if not fileList[c][1] in dupList:#{4
-                    dupList.append(fileList[c][1])
-                #}4
-                if not fileList[nc][1] in dupList:#{4
-                    dupList.append(fileList[nc][1])
-                #}4
-                inc = inc + 1
+        if fsize0 == fsize1 and func.fCompare(fstr0, fstr1, cmp_Mode, hash_Mode, False):#{2
+            #there is else for this if, that is why to use and operator
+            #rather than if inside another if which save a little time
+            #because most of the time files don't have same size
+            #print(fstr0 + ' == ' + fstr1)
+            if size == 0:#{3
+                size = fsize0
             #}3
+            if fDir == '':#{3
+                fDir = fileList[c][0]
+            #}3
+            if not fileList[c][1] in dupList:#{3
+                dupList.append(fileList[c][1])
+            #}3
+            if not fileList[nc][1] in dupList:#{3
+                dupList.append(fileList[nc][1])
+            #}3
+            inc = inc + 1
         #}2
         else:#{2
             if size != 0 and len(dupList) != 0 and fDir != '':#{3
@@ -578,11 +580,26 @@ def compareNcopy(srcDir, dstDir):#{0
         totalDstFile = totalDstFile + len(dstFileList)
         
         #At this point path and file size are both ready for comparison
-        srcFileList.sort(key=lambda x: x[2]) #sort fileList against fSize (file size)
-        dstFileList.sort(key=lambda x: x[2]) #sort fileList against fSize (file size)
+        srcFileList.sort(key=itemgetter(2)) #sort fileList against fSize (file size)
+        #srcFileList.sort(key=lambda x: x[2])
         
+        dstFileList.sort(key=itemgetter(2)) #sort fileList against fSize (file size)
+        #dstFileList.sort(key=lambda x: x[2])
+
+        #at0 = datetime.datetime.now()
+        #sec0 = at0.second
+        #msec0 = at0.microsecond
+        #print(srcFileList)
         loadFileObj(srcFileList, srcObjList, False)
         loadFileObj(dstFileList, dstObjList, False)
+        
+        #at1 = datetime.datetime.now()
+        #sec1 = at1.second
+        #msec1 = at1.microsecond
+        #t0 = sec0 + msec0/1000000
+        #t1 = sec1 + msec1/1000000
+        #dt = t1 - t0
+        #profile1.append(dt)
         '''
         print(srcDir + ' vs ' + dstDir)
         for i in srcObjList:
@@ -594,6 +611,10 @@ def compareNcopy(srcDir, dstDir):#{0
         '''
         #srcObjList.sort(key=lambda x: x.fileSize)
         #dstObjList.sort(key=lambda x: x.fileSize)
+
+        #at0 = datetime.datetime.now()
+        #sec0 = at0.second
+        #msec0 = at0.microsecond
         
         #To remove dstDir files that does not exist in srcDir
         #To also update dstFileDict and dstFileList
@@ -639,20 +660,26 @@ def compareNcopy(srcDir, dstDir):#{0
                             if dstFsize == srcFsize:#{7
                                 #filecmp compare primarily compare file size and modification time
                                 #3rd arg 0-filecmp, 1-hashlib
-                                if func.fCompare(dstDirFile, srcDirFile, cmp_Mode):#{8
+                                #last arg passed in from GUI for filecmp shallow=True/False
+                                if func.fCompare(dstDirFile, srcDirFile, cmp_Mode, hash_Mode, True):#{8
                                     #And its corresponding srcFile is added to srcToCopy list
                                     #By not adding it to the sameFileSrc list
                                     #before the file is re-copied
                                     #dstFile to be kept, but renamed to be same as corresponding srcFile
                                     if dstFnum == 1 and srcFnum == 1:#{9
                                         if dstFile != srcFile:#{10
-                                                tempRN1 = func.buildPath(dstDir, srcFile, delim)
-                                                renameList.append([dstDirFile, tempRN1])
-                                                totalDstRename = totalDstRename + 1 #Global variable
+                                            #This is to check for files with same size, mod-time but different content
+                                            #only thing indicates that they are different files is their file names and content
+                                            if not func.fCompare(dstDirFile, srcDirFile, cmp_Mode, hash_Mode, False):#{11
+                                                continue
+                                            #}11
+                                            tempRN1 = func.buildPath(dstDir, srcFile, delim)
+                                            renameList.append([dstDirFile, tempRN1])
+                                            totalDstRename = totalDstRename + 1 #Global variable
                                         #}10
                                         toRemove = False
                                         sameFileSrc.append(srcObjList[d]) #file that is the same
-                                        break
+                                        continue
                                     #}9
                                     else:#{9
                                         srcNlist = srcObjList[d].fileNames.copy() 
@@ -662,6 +689,11 @@ def compareNcopy(srcDir, dstDir):#{0
                                             if i in dstNlist:#{11
                                                 dstNlist.remove(i)
                                                 toRM.append(i) #not to remove elements while looping
+                                            #}11
+                                        #}10
+                                        if len(toRM) == 0:#{10
+                                            if not func.fCompare(dstDirFile, srcDirFile, cmp_Mode, hash_Mode, False):#{11
+                                                continue
                                             #}11
                                         #}10
                                         for i in toRM:#{10
@@ -711,10 +743,15 @@ def compareNcopy(srcDir, dstDir):#{0
                                         #}10
                                         toRemove = False
                                         sameFileSrc.append(srcObjList[d]) #file that is the same
-                                        break
+                                        continue
                                     #}9
                                 #}8
                             #}7
+                            #if nothing matches then do nothing
+                            #src file will be in srcToCopy list by not being in sameFileSrc list
+                            #dst file will add to delete list by toRemove not being set to False
+                            #this is the only place to break out of looping srcFileList
+                            #coz file size is sorted from small to large
                             elif srcFsize > dstFsize:#{7
                                 break
                             #}7
@@ -785,6 +822,13 @@ def compareNcopy(srcDir, dstDir):#{0
                 #}4
             #}3
         #}2
+        #at1 = datetime.datetime.now()
+        #sec1 = at1.second
+        #msec1 = at1.microsecond
+        #t0 = sec0 + msec0/1000000
+        #t1 = sec1 + msec1/1000000
+        #dt = t1 - t0
+        #profile2.append(dt)
         return 1
     #}1
 #}0
@@ -824,6 +868,9 @@ def backupCopy(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
         global totalSrcCopy
         global totalDstRemove
         global totalDstRename
+        global profile1Num
+        global profile2Num 
+        global profile3Num
         totalSrcFile = 0
         totalDstFile = 0
         totalSrcCopy = 0
@@ -834,6 +881,14 @@ def backupCopy(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
         renameList.clear()
         removeList.clear()
         checkNcopyList.clear()
+
+        #code profiling
+        profile1.clear()
+        profile2.clear()
+        profile3.clear()
+        profile1Num = 0
+        profile2Num = 0
+        profile3Num = 0
         
         #Copying files from the srcDir to dstDir ignoring all subfolders
         if not dstDir in edList and not srcDir in esList:#{2
@@ -956,6 +1011,12 @@ def backupCopy(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
         #}2
         sync_size_est(dst_drive)
         filecmp.clear_cache()
+        #print(profile1)
+        #print(profile2)
+        #profile1Num = sum(profile1)/len(profile1)
+        #profile2Num = sum(profile2)/len(profile2)
+        #print('step 1 profile: ' + str(profile1Num))
+        #print('step 2 profile: ' + str(profile2Num))
         print('Total source file count: ' + str(totalSrcFile))
         print('Total destination file count: ' + str(totalDstFile))
         print('Total source file to copy: ' + str(totalSrcCopy))
@@ -973,7 +1034,6 @@ def backupCopy(srcDir, dstDir, exlSrcDir, exlDstDir):#{0
         #print("renameList: " + str(renameList))
         #print("removeList: " + str(removeList))
         #print("checkNcopyList: " + str(checkNcopyList))
-        #print("agedFileList: " + str(agedFileList) + '\n')
         rets = len(rmtreeList)+len(copytreeList)+len(renameList)+\
                len(removeList)+len(checkNcopyList)
         if rets == 0:#{2

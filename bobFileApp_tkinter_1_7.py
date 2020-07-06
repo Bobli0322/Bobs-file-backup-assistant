@@ -42,6 +42,10 @@ import queue, math, os
 #        check file age base on creation and access time and report
 #           - copied file update creation time
 #           - moved file update access time
+#        improve backup sync speed by using mixture of comparison methods
+#           - compare file metadata (size, modification date)
+#           - compare file name
+#           - compare file content (byte by byte)
 
 #Degree value must convert to radina before calculation
 #|a0 b0| |x|

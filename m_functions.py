@@ -122,15 +122,17 @@ def hasher(tar, isStr, hMode):#{0
         #}2
     #}1
 #}0
-def fCompare(f1, f2, method):#{0
+def fCompare(f1, f2, method, hMode, isShallow):#{0
     if method == 0:#{1
         #filecmp shallow=True - compare file metadata(os.stat)
-        #filecmp shallow=False - compare file content (Recommanded)
-        return filecmp.cmp(f1, f2, shallow=False)
+        #filecmp shallow=False - compare file content
+        #   (recommanded if file size is small)
+        return filecmp.cmp(f1, f2, shallow=isShallow)
+        #return filecmp.cmp(f1, f2)
     #}1
     elif method == 1:#{1
-        fileHash1 = hasher(f1, False, hash_Mode)
-        fileHash2 = hasher(f2, False, hash_Mode)
+        fileHash1 = hasher(f1, False, hMode)
+        fileHash2 = hasher(f2, False, hMode)
         if fileHash1 == fileHash2:#{2
             return True
         #}2

@@ -1,4 +1,5 @@
 import datetime
+#from datetime import datetime
 import time
 import os, shutil, filecmp
 
@@ -89,6 +90,11 @@ import os, shutil, filecmp
 #       check file age base on creation and access time and report
 #       - copied file update creation time
 #       - moved file update access time
+#
+#       improve backup sync speed by using mixture of comparison methods
+#           - compare file metadata (size, modification date)
+#           - compare file name
+#           - compare file content (byte by byte)
 
 #Limitations
 #1. Checksum record validation disallow duplicated files
@@ -145,6 +151,14 @@ genTable = []
 recordTable = []
 recordDir = ''
 csvName0 = ''
+
+#code profiling
+profile1 = []
+profile2 = []
+profile3 = []
+profile1Num = 0
+profile2Num = 0
+profile3Num = 0
 
 if __name__ == '__main__':#{0
     print('Module has no standalone function')
