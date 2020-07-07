@@ -28,11 +28,13 @@ Features include:
 - Checksum record generation, validation, and update
 - Check age of files base on creation and access time and report
 
+**Known bugs**
+- Updating a checksum record file takes two tries to complete
+
 **Limitations:**
 - In certain situations like if there are lots of renamed files, or files that have same size and modification time but different content,
   the backup sync file comparison process could take a long time if file sizes are large because in this case, the program compares files by its content
 - Checksum record validation disallow duplicated files
-- Checksum recording doesn't work in Linux
 - If a file is moved at source, it's deleted and re-copied to new location at destination
 - If a folder is renamed, it's deleted and re-copied at destination
 
