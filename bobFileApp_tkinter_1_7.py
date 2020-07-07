@@ -964,7 +964,7 @@ def update_CSV():#{0
       messagebox.showinfo('Error', 'Please select mode')
    #}1
    else:#{1
-      ans = messagebox.askyesno('Confirmation', 'Start record validation?')
+      ans = messagebox.askyesno('Confirmation', 'Start record update?')
       if ans == True:#{2
          #disable_Btn()
          rdbtn41.config(state=tk.DISABLED)

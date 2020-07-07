@@ -33,6 +33,9 @@ def mergeRecord(tarDir, merFile, fileList):#{0
                     #fName = fileList[i].split(delim)
                     #fName = fName[len(fName)-1]
                     fName = fileList[i].replace(tarDir, '')
+                    if delim == '/':#{5
+                        fName = fName.replace(delim, '\\')
+                    #}5
                     mName = merTable[i].fileName
                     if fName != mName:#{5
                         print('Record entry mismatch')
@@ -101,6 +104,9 @@ def genRecord(tarDir, merFile):#{0
                 #fName = file_list[mCounter].split(delim)
                 #fName = fName[len(fName)-1]
                 fName = file_list[mCounter].replace(tarDir, '')
+                if delim == '/':#{4
+                    fName = fName.replace(delim, '\\')
+                #}4
                 #print(fName)
                 modTime = os.path.getmtime(file_list[mCounter])  
                 tStr = iHash + '/' + fName + '/' + str(modTime) + '/1'
