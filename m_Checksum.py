@@ -85,36 +85,37 @@ def genRecord(tarDir, merFile):#{0
             tarName = tarDir.split(delim)
             tarName = tarName[len(tarName)-1]
             tarName = 'checksum_' + tarName + '_' + now + '.csv'
-            outputFile = open(cwd + delim + tarName, 'a', encoding='utf8') #utf8 - unicode, a is to append
-            outputFile.write('start_checksum_hash_table_/' + tarDir + '/' + now + '\n')
-            if merRes != 0:#{3
-                print('Continue from: ' + merFile)
-                print('Of ' + str(len(mTable)) + ' entries')
-                for i in mTable:#{4
-                    iHash = i.key
-                    fName = i.fileName
-                    modTime = i.modTime
+            #utf8 - unicode, a is to append
+            with open(cwd + delim + tarName, 'a', encoding='utf8') as outputFile:#{3
+                outputFile.write('start_checksum_hash_table_/' + tarDir + '/' + now + '\n')
+                if merRes != 0:#{4
+                    print('Continue from: ' + merFile)
+                    print('Of ' + str(len(mTable)) + ' entries')
+                    for i in mTable:#{5
+                        iHash = i.key
+                        fName = i.fileName
+                        modTime = i.modTime
+                        tStr = iHash + '/' + fName + '/' + str(modTime) + '/1'
+                        outputFile.write(tStr + '\n')
+                    #}5
+                #}4
+                print('Total number of files: ' + str(len(file_list)))
+                while mCounter < len(file_list):#{4
+                    iHash = func.hasher(file_list[mCounter], False, hash_Mode)
+                    #fName = file_list[mCounter].split(delim)
+                    #fName = fName[len(fName)-1]
+                    fName = file_list[mCounter].replace(tarDir, '')
+                    if delim == '/':#{5
+                        fName = fName.replace(delim, '\\')
+                    #}5
+                    #print(fName)
+                    modTime = os.path.getmtime(file_list[mCounter])  
                     tStr = iHash + '/' + fName + '/' + str(modTime) + '/1'
                     outputFile.write(tStr + '\n')
+                    mCounter = mCounter + 1
                 #}4
+                outputFile.write('end_checksum_hash_table_/' + tarDir + '/' + now + '\n')
             #}3
-            print('Total number of files: ' + str(len(file_list)))
-            while mCounter < len(file_list):#{3
-                iHash = func.hasher(file_list[mCounter], False, hash_Mode)
-                #fName = file_list[mCounter].split(delim)
-                #fName = fName[len(fName)-1]
-                fName = file_list[mCounter].replace(tarDir, '')
-                if delim == '/':#{4
-                    fName = fName.replace(delim, '\\')
-                #}4
-                #print(fName)
-                modTime = os.path.getmtime(file_list[mCounter])  
-                tStr = iHash + '/' + fName + '/' + str(modTime) + '/1'
-                outputFile.write(tStr + '\n')
-                mCounter = mCounter + 1
-            #}3
-            outputFile.write('end_checksum_hash_table_/' + tarDir + '/' + now + '\n')
-            outputFile.close()
             print('CSV record file generated at:')
             print(tarName)
             return 1
@@ -133,53 +134,53 @@ def loadRecord(tableFile):#{0
         count = -1
         data_table = []
         ret_table = []
-        csv_table = open(tableFile, 'r', encoding='utf8')
-        read_table = csv.reader(csv_table, delimiter='/') #read_table is not a list
-        read_table = list(read_table)
-        headerStr = read_table[0][0]
-        footerStr = read_table[-1][0]
-        #print(headerStr)
-        #print(footerStr)
-        if headerStr != 'start_checksum_hash_table_' or footerStr != 'end_checksum_hash_table_':#{2
-            print('CSV file header or footer error')
-            return 0
-        #}2
-        else:#{2
-            if delim == '/':#{3
-                tt = read_table[0]
-                del tt[0]
-                if tt[len(tt)-1] == '':#{4
-                    del tt[-1]
-                    del tt[-1]
-                #}4
-                else:#{4
-                    del tt[-1]
-                #}4
-                n1 = delim.join(tt)
-                ret_table.append(n1)
-                ret_table.append('')
+        with open(tableFile, 'r', encoding='utf8') as csv_table:#{2
+            read_table = csv.reader(csv_table, delimiter='/') #read_table is not a list
+            read_table = list(read_table)
+            headerStr = read_table[0][0]
+            footerStr = read_table[-1][0]
+            #print(headerStr)
+            #print(footerStr)
+            if headerStr != 'start_checksum_hash_table_' or footerStr != 'end_checksum_hash_table_':#{3
+                print('CSV file header or footer error')
+                return 0
             #}3
             else:#{3
-                ret_table.append(read_table[0][1])
-                ret_table.append(read_table[0][2])
-            #}3
-            del read_table[-1]
-            del read_table[0]
-            for i in read_table:#{3
-                if i[3] == '1':#{4
-                    item0 = entityc.hashItem(i[0], i[1], i[2], count)
-                    #print(i[1])
-                    count = count - 1
-                    data_table.append(item0)
+                if delim == '/':#{4
+                    tt = read_table[0]
+                    del tt[0]
+                    if tt[len(tt)-1] == '':#{5
+                        del tt[-1]
+                        del tt[-1]
+                    #}5
+                    else:#{5
+                        del tt[-1]
+                    #}5
+                    n1 = delim.join(tt)
+                    ret_table.append(n1)
+                    ret_table.append('')
                 #}4
                 else:#{4
-                    print('CSV file entry format error')
-                    return 0
+                    ret_table.append(read_table[0][1])
+                    ret_table.append(read_table[0][2])
                 #}4
+                del read_table[-1]
+                del read_table[0]
+                for i in read_table:#{4
+                    if i[3] == '1':#{5
+                        item0 = entityc.hashItem(i[0], i[1], i[2], count)
+                        #print(i[1])
+                        count = count - 1
+                        data_table.append(item0)
+                    #}5
+                    else:#{5
+                        print('CSV file entry format error')
+                        return 0
+                    #}5
+                #}4
+                ret_table.append(data_table)
+                return ret_table #return record_table
             #}3
-            csv_table.close()
-            ret_table.append(data_table)
-            return ret_table #return record_table
         #}2
     #}1
 #}0
@@ -326,42 +327,43 @@ def validRecord(csvName, csvName1):#{0
                     counter = counter + 1
                     #print(str(counter))
                 #}4
-                outputFile = open(cwd + delim + 'checksum_report.txt', 'a', encoding='utf8') #a is to append
-                outputFile.write(now + ' Checksum: updating ' + recordDir + ' record with ' + genDir + '\n')
-                if len(toRename) != 0:#{4
-                    outputFile.write('Records to rename:\n')
-                    for i in toRename:#{5
-                        outputFile.write('Rename from ' + i[0] + ' to ' + i[1] + '\n')
+                #'a' is to append
+                with open(cwd + delim + 'checksum_report.txt', 'a', encoding='utf8') as outputFile:#{4
+                    outputFile.write(now + ' Checksum: updating ' + recordDir + ' record with ' + genDir + '\n')
+                    if len(toRename) != 0:#{5
+                        outputFile.write('Records to rename:\n')
+                        for i in toRename:#{6
+                            outputFile.write('Rename from ' + i[0] + ' to ' + i[1] + '\n')
+                        #}6
                     #}5
-                #}4
-                if len(toMod) != 0:#{4
-                    outputFile.write('Records modified:\n')
-                    for i in toMod:#{5
-                        outputFile.write('Review: ' + i + ' (file could be modified)\n')
+                    if len(toMod) != 0:#{5
+                        outputFile.write('Records modified:\n')
+                        for i in toMod:#{6
+                            outputFile.write('Review: ' + i + ' (file could be modified)\n')
+                        #}6
                     #}5
-                #}4
-                if len(toCorrupt) != 0:#{4
-                    outputFile.write('Records corrupted:\n')
-                    for i in toCorrupt:#{5
-                        outputFile.write('Review: ' + i + ' (file could be corrupted)\n')
+                    if len(toCorrupt) != 0:#{5
+                        outputFile.write('Records corrupted:\n')
+                        for i in toCorrupt:#{6
+                            outputFile.write('Review: ' + i + ' (file could be corrupted)\n')
+                        #}6
                     #}5
-                #}4
-                outputFile.write('Records to remove:\n')
-                for i in recordTable:#{4
-                    if i.toKeep == 0 and i.toRename == 0 and i.toReview == 0:#{5
-                        removeCount = removeCount + 1
-                        outputFile.write('Remove: ' + i.fileName + '\n')
+                    outputFile.write('Records to remove:\n')
+                    for i in recordTable:#{5
+                        if i.toKeep == 0 and i.toRename == 0 and i.toReview == 0:#{6
+                            removeCount = removeCount + 1
+                            outputFile.write('Remove: ' + i.fileName + '\n')
+                        #}6
                     #}5
-                #}4
-                outputFile.write('Records to insert:\n')
-                for i in genTable:#{4
-                    if i.toKeep == 0 and i.toRename == 0 and i.toReview == 0:#{5
-                        insertCount = insertCount + 1
-                        outputFile.write('Insert: ' + i.fileName + '\n')
+                    outputFile.write('Records to insert:\n')
+                    for i in genTable:#{5
+                        if i.toKeep == 0 and i.toRename == 0 and i.toReview == 0:#{6
+                            insertCount = insertCount + 1
+                            outputFile.write('Insert: ' + i.fileName + '\n')
+                        #}6
                     #}5
+                    outputFile.write('Checksum report finished\n\n')
                 #}4
-                outputFile.write('Checksum report finished\n\n')
-                outputFile.close()
                 ret = renameCount + insertCount + removeCount
                 print('Validation finished')
                 print('To keep: ' + str(keepCount))
@@ -408,14 +410,15 @@ def updateRecord(isPartial):#{0
         now = datetime.datetime.now()
         now = str(now)
         #csvName0 is the full path of updating record file user specified
-        outputFile = open(csvName0, 'w', encoding='utf8') #w is to write or overwrite
-        outputFile.write('start_checksum_hash_table_/' + recordDir + '/' + now + '\n')
-        for i in recordTable:#{2
-            tStr = str(i.key) + '/' + str(i.fileName) + '/' + str(i.modTime) + '/1'
-            outputFile.write(tStr + '\n')
+        #w is to write or overwrite
+        with open(csvName0, 'w', encoding='utf8') as outputFile:#{2
+            outputFile.write('start_checksum_hash_table_/' + recordDir + '/' + now + '\n')
+            for i in recordTable:#{3
+                tStr = str(i.key) + '/' + str(i.fileName) + '/' + str(i.modTime) + '/1'
+                outputFile.write(tStr + '\n')
+            #}3
+            outputFile.write('end_checksum_hash_table_/' + recordDir + '/' + now + '\n')
         #}2
-        outputFile.write('end_checksum_hash_table_/' + recordDir + '/' + now + '\n')
-        outputFile.close()
         print('Record update finished')
         return 1
     #}1

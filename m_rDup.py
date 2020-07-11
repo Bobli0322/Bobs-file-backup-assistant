@@ -76,6 +76,7 @@ def dup():#{0
             dupFileRM = dupFileRM + 1
         #}2
         except OSError:#{2
+            print('OSError during file removal')
             continue
         #}2
     #}1
@@ -234,30 +235,32 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
                 c = c + 1
             #}3
             filecmp.clear_cache()
-            outputFile = open(cwd + delim + 'findDupFiles_report.txt', 'a', encoding='utf8') #encoding arg is for writing nonEng char 
-            outputFile.write('\n')
-            outputFile.write('Target directory: ' + targetDir + '\n')
-            outputFile.write('Find duplicated files across all sub-directories\n')
-            if len(dupList) > 0:#{3
-                outputFile.write('Files with duplicated content:\n')
-                for i in dupList:#{4
-                    outputFile.write(i + '\n')
+            #encoding arg is for writing nonEng char 
+            with open(cwd + delim + 'findDupFiles_report.txt', 'a', encoding='utf8') as outputFile:#{3 
+                outputFile.write('\n')
+                outputFile.write('Target directory: ' + targetDir + '\n')
+                outputFile.write('Find duplicated files across all sub-directories\n')
+                if len(dupList) > 0:#{4
+                    outputFile.write('Files with duplicated content:\n')
+                    for i in dupList:#{5
+                        outputFile.write(i + '\n')
+                    #}5
                 #}4
-            #}3
-            if len(dupName) > 0:#{3
-                outputFile.write('Files with duplicated names:\n')
-                for i in dupName:#{4
-                    outputFile.write(i + '\n')
+                if len(dupName) > 0:#{4
+                    outputFile.write('Files with duplicated names:\n')
+                    for i in dupName:#{5
+                        outputFile.write(i + '\n')
+                    #}5
                 #}4
+                outputFile.write('Method of file comparison: ' + cMode + '\n')
+                outputFile.write('Total file count: ' + str(totalFiles) + '\n')
+                outputFile.write('Comparison Ops: ' + str(opCounter) + '\n')
+                outputFile.write('Duplicated files: ' + str(cpCounter) + '\n')
+                outputFile.write('Duplicated fileNames: ' + str(dnCounter) + '\n')
+                outputFile.write('Only files with duplicated content are included in deletion\n')
+                outputFile.write('Duplicated file naming require user investigation\n')
+                #outputFile.close() #using "with open" auto close file even with exception
             #}3
-            outputFile.write('Method of file comparison: ' + cMode + '\n')
-            outputFile.write('Total file count: ' + str(totalFiles) + '\n')
-            outputFile.write('Comparison Ops: ' + str(opCounter) + '\n')
-            outputFile.write('Duplicated files: ' + str(cpCounter) + '\n')
-            outputFile.write('Duplicated fileNames: ' + str(dnCounter) + '\n')
-            outputFile.write('Only files with duplicated content are included in deletion\n')
-            outputFile.write('Duplicated file naming require user investigation\n')
-            outputFile.close()
             print('Method of file comparison: ' + cMode)
             print('Total file count: ' + str(totalFiles))
             print('Duplicated files: ' + str(cpCounter))
@@ -368,21 +371,23 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
             #}3
         #}2
         filecmp.clear_cache()
-        outputFile = open(cwd + delim + 'findDupFiles_report.txt', 'a', encoding='utf8') #encoding arg is for writing nonEng char 
-        outputFile.write('\n')
-        outputFile.write('Target directory: ' + targetDir + '\n')
-        outputFile.write('Find duplicated files within each sub-directory\n')
-        if len(dupList) > 0:#{2
-            outputFile.write('Files with duplicated content:\n')
-            for i in dupList:#{3
-                outputFile.write(i + '\n')
+        #encoding arg is for writing nonEng char
+        with open(cwd + delim + 'findDupFiles_report.txt', 'a', encoding='utf8') as outputFile:#{2  
+            outputFile.write('\n')
+            outputFile.write('Target directory: ' + targetDir + '\n')
+            outputFile.write('Find duplicated files within each sub-directory\n')
+            if len(dupList) > 0:#{3
+                outputFile.write('Files with duplicated content:\n')
+                for i in dupList:#{4
+                    outputFile.write(i + '\n')
+                #}4
             #}3
+            outputFile.write('Method of file comparison: ' + cMode + '\n')
+            outputFile.write('Total file count: ' + str(totalFiles) + '\n')
+            outputFile.write('Comparison Ops: ' + str(opCounter) + '\n')
+            outputFile.write('Duplicated files: ' + str(cpCounter) + '\n')
+            #outputFile.close() #using "with open" auto close file even with exception
         #}2
-        outputFile.write('Method of file comparison: ' + cMode + '\n')
-        outputFile.write('Total file count: ' + str(totalFiles) + '\n')
-        outputFile.write('Comparison Ops: ' + str(opCounter) + '\n')
-        outputFile.write('Duplicated files: ' + str(cpCounter) + '\n')
-        outputFile.close()
         print('Method of file comparison: ' + cMode)
         print('Total file count: ' + str(totalFiles))
         print('Duplicated files: ' + str(cpCounter))

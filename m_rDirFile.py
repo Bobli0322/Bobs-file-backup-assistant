@@ -9,8 +9,14 @@ def delete(isFolder):#{0
     print('Removing target..')
     if isFolder == True:#{1
         for tarDir in delDFList:#{2
-            shutil.rmtree(tarDir, onerror=func.remove_readonly)
-            delCount = delCount + 1
+            try:#{3
+                shutil.rmtree(tarDir)
+                delCount = delCount + 1
+            #}3
+            except:#{3
+                print('dir removal error on: ' + tarDir)
+                continue
+            #}3
         #}2
     #}1
     else:#{1
@@ -20,6 +26,7 @@ def delete(isFolder):#{0
                 delCount = delCount + 1
             #}3
             except OSError:#{3
+                print('OSError during file removal')
                 continue
             #}3
         #}2

@@ -554,7 +554,7 @@ def input_Checksum():#{0
    elif validArg(exlSrcArg) == 0 or validArg(exlDstArg) == 0:#{1
       messagebox.showinfo('Error', 'Input parameter invalid')
    #}1
-   elif not os.access(srcArg, os.X_OK) or not os.access(dstArg, os.X_OK):
+   elif not os.access(srcArg, os.R_OK) or not os.access(dstArg, os.R_OK):
       messagebox.showinfo('Error', 'not enough access right')
    #}1
    else:#{1
@@ -620,7 +620,7 @@ def input_Valid():#{0
         messagebox.showinfo('Error', 'Input parameter invalid')
     #}1
     #os.X_OK, os.W_OK, os.R_OK
-    elif not os.access(srcArg, os.X_OK) or not os.access(dstArg, os.X_OK):#{1
+    elif not os.access(srcArg, os.W_OK) or not os.access(dstArg, os.W_OK):#{1
         messagebox.showinfo('Error', 'not enough access right')
     #}1
     elif not fsc.testSync(srcArg, dstArg):#{1
@@ -655,7 +655,7 @@ def chk_Age():#{0
       messagebox.showinfo('Error', 'Input parameter invalid')
    #}1
    #os.X_OK, os.W_OK, os.R_OK
-   elif not os.access(dstArg, os.X_OK):#{1
+   elif not os.access(dstArg, os.R_OK):#{1
       messagebox.showinfo('Error', 'not enough access right')
    #}1
    else:#{1
@@ -749,7 +749,7 @@ def input_Valid2():#{0
    elif validArg(exl2Arg) == 0:#{1
       messagebox.showinfo('Error', 'Input parameter invalid')
    #}1
-   elif not os.access(tarArg, os.X_OK):
+   elif not os.access(tarArg, os.W_OK):
       messagebox.showinfo('Error', 'not enough access right')
    #}1
    elif not rdup.testDup(tarArg, iMode2, iCS):#{1
@@ -856,7 +856,7 @@ def input_Valid3():#{0
     elif validArg(exl3Arg) == 0:
         messagebox.showinfo('Error', 'Input parameter invalid')
     #}1
-    elif not os.access(tarArg, os.X_OK):
+    elif not os.access(tarArg, os.W_OK):
         messagebox.showinfo('Error', 'not enough access right')
     #}1
     elif not rdf.testDel(tarArg, typeArg3):#{1
@@ -945,7 +945,7 @@ def analyse_CSV():#{0
    elif not os.path.isfile(val41Arg) or not os.path.isfile(val42Arg):#{1
       messagebox.showinfo('Error', 'file not found')
    #}1
-   elif not os.access(val41Arg, os.R_OK) or not os.access(val42Arg, os.R_OK):
+   elif not os.access(val41Arg, os.W_OK) or not os.access(val42Arg, os.W_OK):
       messagebox.showinfo('Error', 'not enough access right')
    #}1
    else:#{1

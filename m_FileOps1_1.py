@@ -22,6 +22,7 @@ def checkNcopy(srcDir, dstDir, srcName, dstName, delim):#{0
         return True
     #}1
     except OSError:#{1
+        print('OSError during file copying')
         return False
     #}1
 #}0
@@ -45,6 +46,7 @@ def checkNmove(srcDir, dstDir, srcName, dstName, delim):#{0
         return True
     #}1
     except OSError:#{1
+        print('OSError during file moving')
         return False
     #}1
 #}0

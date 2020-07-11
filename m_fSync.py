@@ -176,19 +176,26 @@ def filing(iMode, iCS):#{0
     if iMode == 3:#{1
         for tf in rmtreeList:#{2
             #print('Folder remove ' + tf)
-            temp = sum([len(cc) for aa, bb, cc in os.walk(tf)])
-            totalDstRemove = totalDstRemove + temp
-            shutil.rmtree(tf, onerror=func.remove_readonly)
+            try:#{3
+                shutil.rmtree(tf)
+                temp = sum([len(cc) for aa, bb, cc in os.walk(tf)])
+                totalDstRemove = totalDstRemove + temp
+            #}3
+            except:#{3
+                print('dir removal error on: ' + tf)
+                continue
+            #}3
         #}2
         for rmf in removeList:#{2
             try:#{3
                 os.remove(rmf)
                 totalDstRemove = totalDstRemove + 1
-                #print('Remove: ' + rmf)
             #}3
             except OSError:#{3
+                print('OSerror during file removal')
                 continue
             #}3
+            #print('Remove: ' + rmf)
         #}2
     #}1
     if iMode == 3 or iMode == 2:#{1
@@ -196,19 +203,35 @@ def filing(iMode, iCS):#{0
             try:#{3
                 os.rename(rnf[0], rnf[1])
                 totalDstRename = totalDstRename + 1
-                #print('Rename: ' + rnf[0] + ' -> ' + rnf[1])
             #}3
             except OSError:#{3
+                print('OSerror during file rename')
                 continue
             #}3
+            #print('Rename: ' + rnf[0] + ' -> ' + rnf[1])
         #}2
     #}1
+    cpTreeErr = []
+    cpFileErr = []
     if iMode == 3 or iMode == 1:#{1
         #copytree function create dst directory path automatically
         for cpt in copytreeList:#{2
-            shutil.copytree(cpt[0], cpt[1])
-            temp = sum([len(cc) for aa, bb, cc in os.walk(cpt[1])])
-            totalSrcCopy = totalSrcCopy + temp
+            try:#{3
+                shutil.copytree(cpt[0], cpt[1])
+                temp = sum([len(cc) for aa, bb, cc in os.walk(cpt[1])])
+                totalSrcCopy = totalSrcCopy + temp
+            #}3
+            except Error as err:#{3
+                print('Error during directory copy')
+                print('src name: ' + str(err.args[0]))
+                print('dst name: ' + str(err.args[1]))
+                print('exception: ' + str(err.args[2]))
+                cpTreeErr.append(cpt)
+                continue
+            #}3
+        #}2
+        for cptErr in cpTreeErr:#{2
+            copytreeList.remove(cptErr)
         #}2
         for cpf in checkNcopyList:#{2
             tempDst = func.buildPath(cpf[1], cpf[3], delim)
@@ -216,6 +239,12 @@ def filing(iMode, iCS):#{0
             if fOps.checkNcopy(cpf[0], cpf[1], cpf[2], cpf[3], delim) == True:#{3
                 totalSrcCopy = totalSrcCopy + 1
             #}3
+            else:#{3
+                cpFileErr.append(cpf)
+            #}3
+        #}2
+        for cpfErr in cpFileErr:#{2
+            checkNcopyList.remove(cpfErr)
         #}2
     #}1
     #Checksum for transfered files

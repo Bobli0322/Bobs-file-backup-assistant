@@ -126,7 +126,7 @@ def fCompare(f1, f2, method, hMode, isShallow):#{0
     if method == 0:#{1
         #filecmp shallow=True - compare file metadata(os.stat)
         #filecmp shallow=False - compare file content
-        #   (recommanded if file size is small)
+        #   (Recommanded if file size is small)
         return filecmp.cmp(f1, f2, shallow=isShallow)
         #return filecmp.cmp(f1, f2)
     #}1
@@ -174,9 +174,16 @@ def buildPath(path1, path2, delim):#{0
     return retStr
 #}0
 def remove_readonly(func, path, _):#{0
+    #This handler to rmtree err is used only for files this program created
     #Clear the readonly bit and reattempt the removal
+    print('Clear the readonly bit and reattempt dir removal')
     os.chmod(path, stat.S_IWRITE)
     func(path)
+#}0
+def dirRemoval_err(func, path, _):#{0
+    #This handler to rmtree err is for display each file inside dir
+    #notify about the error but take no action
+    print('rmtree error: ' + path)
 #}0
 if __name__ == '__main__':#{0
     print('Module has no standalone function')
