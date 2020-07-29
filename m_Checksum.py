@@ -318,14 +318,33 @@ def validRecord(csvName, csvName1):#{0
                             #}7
                             else:#{7
                                 if lmTime == imTime and lHash != iHash and lName != iName:#{8
-                                    recordTable[cc].toReview = recordTable[cc].toReview + 1
-                                    toCorrupt.append(lName)
+                                    if recordTable[cc].toKeep == 0:#{9
+                                        i.toReview = i.toReview + 1
+                                        recordTable[cc].toReview = recordTable[cc].toReview + 1
+                                        toCorrupt.append(lName)
+                                        reviewCount = reviewCount + 1
+                                    #}9
                                 #}8
                             #}7
                         #}6
                     #}5
                     counter = counter + 1
                     #print(str(counter))
+                #}4
+                toRename = set(toRename)
+                toRename = list(toRename)
+                toMod = set(toMod)
+                toMod = list(toMod)
+                toCorrupt = set(toCorrupt)
+                toCorrupt = list(toCorrupt)
+                for i in recordTable:#{4
+                    if i.toKeep > 0 and i.toReview > 0:#{5
+                        if i.fileName in toCorrupt:#{6
+                            toCorrupt.remove(i.fileName)
+                            reviewCount = reviewCount - i.toReview
+                            i.toReview = 0
+                        #}6
+                    #}5
                 #}4
                 #'a' is to append
                 with open(cwd + delim + 'checksum_report.txt', 'a', encoding='utf8') as outputFile:#{4
