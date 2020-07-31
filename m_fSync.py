@@ -699,6 +699,8 @@ def compareNcopy(srcDir, dstDir):#{0
                                         if dstFile != srcFile:#{10
                                             #This is to check for files with same size, mod-time but different content
                                             #only thing indicates that they are different files is their file names and content
+                                            #If file names mismatch then do a file content comparison
+                                            #to verify two files are in fact the same, if not then continue
                                             if not func.fCompare(dstDirFile, srcDirFile, cmp_Mode, hash_Mode, False):#{11
                                                 continue
                                             #}11
@@ -720,6 +722,8 @@ def compareNcopy(srcDir, dstDir):#{0
                                                 toRM.append(i) #not to remove elements while looping
                                             #}11
                                         #}10
+                                        #When there is a total mismatch in file names, do a file content compare
+                                        #to verify two files are in fact the same, if not continue
                                         if len(toRM) == 0:#{10
                                             if not func.fCompare(dstDirFile, srcDirFile, cmp_Mode, hash_Mode, False):#{11
                                                 continue

@@ -6,6 +6,9 @@ import m_class_entity as entityc
 #Nested loops
 #Return a list that contains file path for tar(target dir)
 #excluding dir path in exlDir
+#excluding Thumbs.db files
+#File count would be different from windows folder property number
+#because fold property count Thumbs.db files as well
 def listFile(tar, delim, exlDir, thumbs):#{0
     tempList = []
     tempList2= []
@@ -187,4 +190,11 @@ def dirRemoval_err(func, path, _):#{0
 #}0
 if __name__ == '__main__':#{0
     print('Module has no standalone function')
+    ##dd = '\\'
+    ##tt = 'Thumbs.db' 
+    ##ee = ''
+    ##tar = 'D:\\sVideos\\ASMR'
+    ##res = listFile(tar, dd, ee, tt)
+    ##n = len(res)
+    ##print('number of files: ' + str(n))
 #}0
