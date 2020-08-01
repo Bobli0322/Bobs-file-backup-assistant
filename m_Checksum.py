@@ -260,8 +260,8 @@ def validRecord(csvName, csvName1):#{0
             genTable = csv0[2]
             recordDir = csv1[0]
             genDir = csv0[0]
-            res = dupRecord()
-            #res = 1 #this is to handle duplicated files in record
+            #res = dupRecord()
+            res = 1 #this is to handle duplicated files in record
             if res == 0:#{3
                 print('Records contain duplicates, cannot update')
                 print('Recommend:')

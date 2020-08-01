@@ -101,7 +101,9 @@ import os, shutil, filecmp
 #           impact is low because all it's doing is updating csv files
 
 #Limitations
-#1. Checksum record validation disallow duplicated files
+#1. Checksum record validation disallow duplicated files (FIXED)
+#2. Valid checksum record files may take multiple runs
+#       just analyse and update until no more to update
 
 #It's better to put immutable here
 print('Executing')
