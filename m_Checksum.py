@@ -227,6 +227,11 @@ def dupRecord():#{0
     #}1
 #}0
 #csvName1 is updating(original) record file, csvName is the new file
+#Rules for sync records
+#- If an entry is toKeep then it's not toRename
+#- If an entry is toRename then it's not toMod
+#- If an entry is toMod then it's not toCorrupt
+#- If an entry is toCorrupt then ??
 def validRecord(csvName, csvName1):#{0
     if not os.path.isfile(csvName) or not os.path.isfile(csvName1):#{1
         print('CSV file missing')
@@ -293,7 +298,8 @@ def validRecord(csvName, csvName1):#{0
                             lmTime = recordTable[cc].modTime
                             imTime = i.modTime
                             if lHash == iHash and lName != iName:#{7
-                                if recordTable[cc].toRename == 0 and i.toRename == 0:#{8
+                                if recordTable[cc].toRename == 0 and i.toRename == 0 and\
+                                   recordTable[cc].toKeep == 0 and i.toKeep == 0:#{8
                                     #print(lName + ' => ' + iName)
                                     i.toRename = i.toRename + 1 #to rename on record
                                     recordTable[cc].toRename = recordTable[cc].toRename + 1
@@ -304,7 +310,7 @@ def validRecord(csvName, csvName1):#{0
                                 #}8
                             #}7
                             elif lName == iName and lHash != iHash:#{7
-                                if recordTable[cc].toKeep == 0:#{8
+                                if recordTable[cc].toKeep == 0 and recordTable[cc].toRename == 0:#{8
                                     i.toReview = i.toReview + 1 #to review
                                     recordTable[cc].toReview = recordTable[cc].toReview + 1
                                     if lmTime == imTime:#{9
@@ -317,7 +323,8 @@ def validRecord(csvName, csvName1):#{0
                                 #}8
                             #}7
                             elif lHash == iHash and lName == iName:#{7
-                                if recordTable[cc].toKeep == 0 and i.toKeep == 0:#{8
+                                if recordTable[cc].toKeep == 0 and i.toKeep == 0 and\
+                                   recordTable[cc].toRename == 0 and i.toRename == 0:#{8
                                     i.toKeep = i.toKeep + 1
                                     recordTable[cc].toKeep = recordTable[cc].toKeep + 1
                                     keepCount = keepCount + 1
@@ -325,7 +332,7 @@ def validRecord(csvName, csvName1):#{0
                             #}7
                             else:#{7
                                 if lmTime == imTime and lHash != iHash and lName != iName:#{8
-                                    if recordTable[cc].toKeep == 0:#{9
+                                    if recordTable[cc].toKeep == 0 and recordTable[cc].toRename == 0:#{9
                                         i.toReview = i.toReview + 1
                                         recordTable[cc].toReview = recordTable[cc].toReview + 1
                                         toCorrupt.append(lName)

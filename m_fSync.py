@@ -176,12 +176,15 @@ def filing(iMode, iCS):#{0
     if iMode == 3:#{1
         for tf in rmtreeList:#{2
             #print('Folder remove ' + tf)
+            tfTotal = sum([len(cc) for aa, bb, cc in os.walk(tf)])
             try:#{3
                 shutil.rmtree(tf)
-                temp = sum([len(cc) for aa, bb, cc in os.walk(tf)])
-                totalDstRemove = totalDstRemove + temp
+                totalDstRemove = totalDstRemove + tfTotal
             #}3
             except:#{3
+                tfLeft = sum([len(cc) for aa, bb, cc in os.walk(tf)])
+                tfRM = tfTotal - tfLeft
+                totalDstRemove = totalDstRemove + tfRM
                 print('dir removal error on: ' + tf)
                 continue
             #}3
