@@ -35,7 +35,6 @@ def delete(isFolder):#{0
     print('Completed, ' + str(delCount) + ' instances removed.\n')
 #}0
 def testDel(tarDir, isFolder):#{0
-    tarDir = tarDir + delim
     testTarDir = []
     testContent = "testFile"
     testTarDir.append(func.buildPath(tarDir, "testDir", delim))

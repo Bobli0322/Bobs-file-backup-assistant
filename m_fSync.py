@@ -383,8 +383,6 @@ def sync_size_est(dst_drive):#{0
 #}0
 #Test the function of backupCopy 
 def testSync(srcDir, dstDir):#{0
-    srcDir = srcDir + delim
-    dstDir = dstDir + delim
     testSrcDir = []
     testDstDir = []
     testSrcFile = []
@@ -456,110 +454,6 @@ def testSync(srcDir, dstDir):#{0
     #}1
 #}0
 
-def loadFileObj(fileList, objList, isDup):#{0
-    c = 0
-    inc = 1
-    strucList = []
-    dupList = []
-    ndupList = []
-    size = 0
-    fDir = ''
-    while c <= len(fileList)-1:#{1
-        nc = c + inc
-        if nc > len(fileList)-1:#{2
-            if size != 0 and len(dupList) != 0 and fDir != '':#{3
-                dupList.append(fDir)
-                dupList.append(size)
-                dupList.append(inc)
-                tList = dupList.copy() 
-                strucList.append(tList) 
-                size = 0
-                fDir = ''
-                dupList.clear()
-            #}3
-            else:#{3
-                if isDup == False:#{4
-                    fsize0 = fileList[c][2]
-                    fstr0 = fileList[c][0] + delim + fileList[c][1]
-                    if not fstr0 in ndupList:#{5
-                        #ndupList.append(fstr0) #not needed coz function returns from here
-                        ts = [fileList[c][1], fileList[c][0], fsize0, 1]
-                        strucList.append(ts)
-                    #}5
-                #}4
-            #}3
-            break
-        #}2
-        fsize0 = fileList[c][2]
-        fstr0 = fileList[c][0] + delim + fileList[c][1]
-        fsize1 = fileList[nc][2]
-        fstr1 = fileList[nc][0] + delim + fileList[nc][1]
-        if fsize0 == fsize1 and func.fCompare(fstr0, fstr1, cmp_Mode, hash_Mode, False):#{2
-            #there is else for this if, that is why to use and operator
-            #rather than if inside another if which save a little time
-            #because most of the time files don't have same size
-            #print(fstr0 + ' == ' + fstr1)
-            if size == 0:#{3
-                size = fsize0
-            #}3
-            if fDir == '':#{3
-                fDir = fileList[c][0]
-            #}3
-            if not fileList[c][1] in dupList:#{3
-                dupList.append(fileList[c][1])
-            #}3
-            if not fileList[nc][1] in dupList:#{3
-                dupList.append(fileList[nc][1])
-            #}3
-            inc = inc + 1
-        #}2
-        else:#{2
-            if size != 0 and len(dupList) != 0 and fDir != '':#{3
-                dupList.append(fDir)
-                dupList.append(size)
-                dupList.append(inc)
-                tList = dupList.copy()
-                strucList.append(tList) 
-                size = 0
-                fDir = ''
-                dupList.clear()
-            #}3
-            else:#{3
-                if isDup == False:#{4
-                    if inc > 1:#{5
-                        if not fstr1 in ndupList:#{6 
-                            ndupList.append(fstr1)
-                            ts = [fileList[nc][1], fileList[nc][0], fsize1, 1]
-                            strucList.append(ts)
-                        #}6
-                    #}5
-                    else:#{5
-                        if not fstr0 in ndupList:#{6
-                            ndupList.append(fstr0)
-                            ts = [fileList[c][1], fileList[c][0], fsize0, 1]
-                            strucList.append(ts)
-                        #}6
-                    #}5
-                #}4
-            #}3
-            c = c + inc
-            inc = 1
-        #}2
-    #}1
-    #strucList.sort(key=len) #comment out to keep sorted in file size
-    for i in strucList:#{1
-        num = i[-1]
-        fsize = i[-2]
-        #fDir = i[0].replace(dirStr, '')
-        #fDir = fDir.split(delim)
-        #del fDir[-1]
-        #fDir = delim.join(fDir)
-        fNames = i[0:num]
-        fDir = i[num]
-        item0 = entityc.iFile(num, fNames, fDir, fsize)
-        objList.append(item0)
-    #}1
-#}0
 #"Copy" files in srcDir into dstDir ignoring all subfolders
 #Only files that does not exist in dstDir
 def compareNcopy(srcDir, dstDir):#{0
@@ -622,8 +516,8 @@ def compareNcopy(srcDir, dstDir):#{0
         #sec0 = at0.second
         #msec0 = at0.microsecond
         #print(srcFileList)
-        loadFileObj(srcFileList, srcObjList, False)
-        loadFileObj(dstFileList, dstObjList, False)
+        func.loadFileObj(srcFileList, srcObjList, False, delim, cmp_Mode, hash_Mode)
+        func.loadFileObj(dstFileList, dstObjList, False, delim, cmp_Mode, hash_Mode)
         
         #at1 = datetime.datetime.now()
         #sec1 = at1.second
@@ -637,9 +531,11 @@ def compareNcopy(srcDir, dstDir):#{0
         for i in srcObjList:
             ts = i.fileNames
             print(ts)
+        print('\n')
         for i in dstObjList:
             ts = i.fileNames
             print(ts)
+        print('\n')
         '''
         #srcObjList.sort(key=lambda x: x.fileSize)
         #dstObjList.sort(key=lambda x: x.fileSize)
@@ -718,6 +614,8 @@ def compareNcopy(srcDir, dstDir):#{0
                                     else:#{9
                                         srcNlist = srcObjList[d].fileNames.copy() 
                                         dstNlist = dstObjList[c].fileNames.copy()
+                                        #print(srcNlist)
+                                        #print(dstNlist)
                                         toRM = []
                                         for i in srcNlist:#{10
                                             if i in dstNlist:#{11

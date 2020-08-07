@@ -3,7 +3,6 @@ import m_class_entity as entityc
 from m_gVar import * #contains global variables
 
 def testDup(tarDir, mode, cmpMode):#{0
-    tarDir = tarDir + delim
     testTarDir = []
     testTarFile = []
     testContent = "testFile"
@@ -116,6 +115,7 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
     #}1
     else:#{1
         fileList = []
+        objList = []
         nameList = []
         dupFileList.clear()
         opCounter = 0
@@ -189,50 +189,64 @@ def globalCompare(targetDir, cmpMode, exlDir):#{0
                 #}4
                 c = c + 1
             #}3
-            c = 0
-            print('Finding duplicated files across all sub-directories...')
             fileList.sort(key=lambda x: x[2]) #sort fileList against fSize (file size)
-            while c < (len(fileList)-1):#{3
-                nc = c + 1
-                opCounter = opCounter + 1
-                file1 = fileList[c][1]     
-                file2 = fileList[nc][1]     
-                size1 = fileList[c][2]
-                size2 = fileList[nc][2]
-                dir1 = fileList[c][0]
-                dir2 = fileList[nc][0]
-                df1 = func.buildPath(dir1, file1, delim)
-                df2 = func.buildPath(dir2, file2, delim)
-                #cmpMode 0-filecmp, 1-hashlib
-                if size1 == size2 and size1 != 0:#{4
-                    if func.fCompare(df1, df2, cmpMode, hash_Mode, False):#{5 
-                        f1ct = os.path.getctime(df1) 
-                        f2ct = os.path.getctime(df2)
-                        f1at = os.path.getatime(df1)
-                        f2at = os.path.getatime(df2)
-                        f1t = ([f1ct, f1at])
-                        f2t = ([f2ct, f2at])
-                        f1t.sort()
-                        f2t.sort()
-                        if f1t[len(f1t)-1] > f2t[len(f2t)-1]:#{6
-                            dupFileList.append(df2)
-                            del fileList[nc]
-                            cpCounter = cpCounter + 1
-                            tStr = df1 + ',==,' + df2 + ', remove: latter'
-                            dupList.append(tStr)
-                            continue #effect is c is not incremented
+            #loadFileObj populates objList list with list of duplicated files
+            func.loadFileObj(fileList, objList, True, delim, cmpMode, hash_Mode)
+            print('Finding duplicated files across all sub-directories...')
+            if len(objList) != 0:#{3
+                for i in objList:#{4
+                    timeList = []
+                    Bvalue = 0
+                    Bindex = 0
+                    counter = 0
+                    for j in range(len(i.fileNames)):#{5
+                        if len(i.fileDir) == 1:#{6
+                            k = 0
                         #}6
                         else:#{6
-                            dupFileList.append(df1)
-                            del fileList[c]
-                            cpCounter = cpCounter + 1
-                            tStr = df1 + ',==,' + df2 + ', remove: former'
-                            dupList.append(tStr)
-                            continue #effect is c is not incremented
-                        #}6    
+                            k = j
+                        #}6
+                        path = func.buildPath(i.fileDir[k], i.fileNames[j], delim)
+                        ct = os.path.getctime(path)
+                        at = os.path.getatime(path)
+                        timeList.append(ct)
+                        timeList.append(at)
                     #}5
+                    while counter < len(timeList):#{5
+                        if timeList[counter] > Bvalue:#{6
+                            Bvalue = timeList[counter]
+                            Bindex = counter
+                        #}6
+                        counter = counter + 1
+                    #}5
+                    cd = Bindex//2
+                    #cr = Bindex%2
+                    #print(str(cd))
+                    if len(i.fileDir) == 1:#{5
+                        k = 0
+                    #}5
+                    else:#{5
+                        k = cd
+                    #}5
+                    keepath = func.buildPath(i.fileDir[k], i.fileNames[cd], delim)
+                    toKeep = 'To keep:\n' + keepath + '\nIn:\n' + keepath + '\n'
+                    #print(toKeep)
+                    for j in range(len(i.fileNames)):#{5
+                        if j != cd:#{6
+                            if len(i.fileDir) == 1:#{7
+                                k = 0
+                            #}7
+                            else:#{7
+                                k = j
+                            #}7
+                            toRM = func.buildPath(i.fileDir[k], i.fileNames[j], delim)
+                            toKeep = toKeep + toRM + '\n'
+                            dupFileList.append(toRM)
+                        #}6
+                    #}5
+                    dupList.append(toKeep)
+                    cpCounter = cpCounter + 1
                 #}4
-                c = c + 1
             #}3
             filecmp.clear_cache()
             #encoding arg is for writing nonEng char 
@@ -308,6 +322,7 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
         print('Finding duplicated files within each sub-directory...') 
         for folderName, subFolders, fileNames in os.walk(targetDir):#{2
             fileList = []
+            objList = []
             c = 0
             for eDir in eList:#{3
                 if eDir in folderName:#{4
@@ -321,51 +336,54 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
                 for fileName in fileNames:#{4
                     if fileName.lower() != thumbs.lower():#{5
                         totalFiles = totalFiles + 1
-                        fsize = os.path.getsize(func.buildPath(folderName, fileName, delim))
-                        fileList.append([fileName,fsize])
+                        fSize = os.path.getsize(func.buildPath(folderName, fileName, delim))
+                        #fileList.append([fileName,fsize])
+                        fileList.append([folderName, fileName, fSize])
                     #}5
                 #}4
-                if len(fileList) != 0:#{4
-                    fileList.sort(key=lambda x: x[1]) #sort fileList against fSize (file size)
-                    while c < (len(fileList)-1):#{5
-                        nc = c + 1
-                        opCounter = opCounter + 1
-                        file1 = fileList[c][0]     #
-                        file2 = fileList[nc][0]     #File to remove if same
-                        ff1 = func.buildPath(folderName, file1, delim)
-                        ff2 = func.buildPath(folderName, file2, delim)
-                        size1 = fileList[c][1]
-                        size2 = fileList[nc][1]
-                        if size1 == size2 and size1 != 0:#{6
-                            if func.fCompare(ff1, ff2, cmpMode, hash_Mode, False):#{7
-                                #File with the latest creation time or access time is kept
-                                f1ct = os.path.getctime(ff1)
-                                f1at = os.path.getatime(ff1)
-                                f2ct = os.path.getctime(ff2)
-                                f2at = os.path.getatime(ff2)
-                                f1t = ([f1ct, f1at])
-                                f2t = ([f2ct, f2at])
-                                f1t.sort()
-                                f2t.sort()
-                                if f1t[len(f1t)-1] > f2t[len(f2t)-1]:#{8
-                                    dupFileList.append(ff2)
-                                    del fileList[nc] #list is auto re-indexed after element removed
-                                    cpCounter = cpCounter + 1
-                                    tStr = ff1 + ',==,' + ff2 + ', remove: ' + ff2
-                                    dupList.append(tStr)
-                                    continue #effect is c is not incremented
-                                #}8
-                                else:#{8
-                                    dupFileList.append(ff1)
-                                    del fileList[c]
-                                    cpCounter = cpCounter + 1
-                                    tStr = ff1 + ',==,' + ff2 + ', remove: ' + ff1
-                                    dupList.append(tStr)
-                                    continue #effect is c is not incremented
-                                #}8
+                fileList.sort(key=lambda x: x[2])
+                #loadFileObj populates objList list with list of duplicated files
+                func.loadFileObj(fileList, objList, True, delim, cmpMode, hash_Mode)
+                ##for i in objList:#{4
+                ##    ts = i.fileNames
+                ##    print(ts)
+                ##}4
+                ##print('\n')
+                if len(objList) != 0:#{4
+                    for i in objList:#{5
+                        timeList = []
+                        Bvalue = 0
+                        Bindex = 0
+                        counter = 0
+                        for j in i.fileNames:#{6
+                            path = func.buildPath(i.fileDir[0], j, delim)
+                            ct = os.path.getctime(path)
+                            at = os.path.getatime(path)
+                            timeList.append(ct)
+                            timeList.append(at)
+                        #}6
+                        while counter < len(timeList):#{6
+                            if timeList[counter] > Bvalue:#{7
+                                Bvalue = timeList[counter]
+                                Bindex = counter
+                            #}7
+                            counter = counter + 1
+                        #}6
+                        cd = Bindex//2
+                        #cr = Bindex%2
+                        #print(str(cd))
+                        toKeep = 'To keep: ' + i.fileNames[cd] + ', to remove:'
+                        #print(toKeep)
+                        for j in range(len(i.fileNames)):#{6
+                            if j != cd:#{7
+                                toKeep = toKeep + ' ' + i.fileNames[j]
+                                toRM = func.buildPath(i.fileDir[0], i.fileNames[j], delim)
+                                dupFileList.append(toRM)
                             #}7
                         #}6
-                        c = c + 1
+                        toKeep = toKeep + ', at ' + i.fileDir[0]
+                        dupList.append(toKeep)
+                        cpCounter = cpCounter + 1
                     #}5
                 #}4
             #}3
@@ -397,4 +415,14 @@ def localCompare(targetDir, cmpMode, exlDir):#{0
         ret = str(totalFiles) + '-0-' + str(cpCounter)
         return ret
     #}1
+#}0
+if __name__ == '__main__':#{0
+    print('Module has no standalone function')
+    #dd = '\\'
+    #tt = 'Thumbs.db' 
+    ee = ''
+    #tar = 'D:\\tempDir\\JobAppHis'
+    tar = 'P:\\testDir1'
+    #tar = 'P:\\MyDoc\\Programming\\Audio\\Proj\\sSound_data\\e08\\d00'
+    #(fileList, objList, isDup, delim, cmp_Mode, hash_Mode)
 #}0
