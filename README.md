@@ -1,5 +1,5 @@
 # Bobs-file-backup-assistant
-This program assists in backup and maintain personal data files such as documents, pictures, and videos.
+This program assists in backup and maintain personal data files such as documents, pictures, videos, etc.
 It provides a suite of functionalities from tools like Rsync, fdupes, and md5deep.
 
 It's written in Python 3 with tkinter GUI.\
@@ -17,7 +17,7 @@ May also work on Linux.
 Launch the application using command "python bobFileApp_tkinter_1_7.py" in terminal\
 In case of building an executable, please build with terminal attached because terminal is used heavily to display information.
 
-This program is best suited for backup and maintain data files that have no duplication, like personal documents, pictures, and vidoes.
+This program is best suited for backup and maintain personal files like documents, pictures, vidoes, etc.
 Features include:
 - Backup sync
 - Finding and removing duplicated files (option to compare checksum)
@@ -31,8 +31,7 @@ Features include:
 - Updating a checksum record file takes multiple tries to complete.
 
 **Limitations:**
-- In certain situations like if there are lots of renamed files, or files that have same size and modification time but different content,
-  the backup sync file comparison process could take a long time if file sizes are large because in this case, the program compares files by its content
+- In certain situations like if there are lots of renamed files, or files that have same size and modification time but different content, or lots of large files that are duplicated, the backup sync file comparison process could take a long time if file sizes are large because in this case, the program compares files by its content
 - If a file is moved at source, it's deleted and re-copied to new location at destination
 - If a folder is renamed, it's deleted and re-copied at destination
 
