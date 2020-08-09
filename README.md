@@ -31,9 +31,7 @@ Features include:
 - Updating a checksum record file takes multiple tries to complete.
 
 **Limitations:**
-- In certain situations like if there are lots of renamed files, or files that have same size and modification time but different content, or lots of large files that are duplicated, the backup sync file comparison process could take a long time if file sizes are large because in this case, the program compares files by its content
-- If a file is moved at source, it's deleted and re-copied to new location at destination
-- If a folder is renamed, it's deleted and re-copied at destination
+- In certain situations like if there are lots of renamed files, or files that have same size and modification time but different content, or lots of large files that are duplicated, the backup sync file comparison process could take a long time if file sizes are large because in this case, the program compares files by its content.
 
 **Advantages:**
 - If a file is renamed at source, it's not re-copied during backup sync operation, but simply renamed at destination.
