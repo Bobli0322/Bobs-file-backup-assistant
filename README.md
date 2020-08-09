@@ -18,7 +18,7 @@ Launch the application using command "python bobFileApp_tkinter_1_7.py" in termi
 In case of building an executable, please build with terminal attached because terminal is used heavily to display information.
 
 This program is best suited for backup and maintain personal files like documents, pictures, vidoes, etc.\
-Features include:
+**Features**
 - Backup sync
 - Finding and removing duplicated files (option to compare checksum)
 - Finding reused file names, and prompt user to investigate
