@@ -15,7 +15,8 @@ Tested on Windows 8.1.\
 May also work on Linux.
 
 Launch the application using command "python bobFileApp_tkinter_1_7.py" in terminal\
-In case of building an executable, please build with terminal attached because terminal is used heavily to display information.
+In case of building an executable, please build with terminal attached because terminal is used heavily to display information.\
+Also make executable that requires admin access to run.
 
 This program is best suited for backup and maintain personal files like documents, pictures, vidoes, etc.\
 **Features**
@@ -28,10 +29,11 @@ This program is best suited for backup and maintain personal files like document
 - Check age of files base on creation and access time and report
 
 **Known bugs**
-- Updating a checksum record file takes multiple tries to complete.
+- Updating a checksum record file may take multiple tries to complete.
 
 **Limitations:**
 - In certain situations like if there are lots of renamed files, or files that have same size and modification time but different content, or lots of large files that are duplicated, the backup sync file comparison process could take a long time if file sizes are large because in this case, the program compares files by its content.
+- Checksum record validation disallow duplicated files.
 
 **Advantages:**
 - If a file is renamed at source, it's not re-copied during backup sync operation, but simply renamed at destination.
