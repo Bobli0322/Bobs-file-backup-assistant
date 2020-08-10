@@ -96,12 +96,10 @@ import os, shutil, filecmp
 #           - compare file name
 #           - compare file content (byte by byte)
 #
-#        Checksum recording now can handle duplicated files
-#           but it takes multiple iterations of analysis and update to complete
-#           impact is low because all it's doing is updating csv files
+#       Checksum validation takes multiple iterations of analysis and update to complete
 
 #Limitations
-#1. Checksum record validation disallow duplicated files (FIXED)
+#1. Checksum record validation disallow duplicated files
 #2. Valid checksum record files may take multiple runs
 #       just analyse and update until no more to update
 

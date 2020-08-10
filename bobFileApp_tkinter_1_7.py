@@ -46,9 +46,7 @@ import queue, math, os
 #           - compare file metadata (size, modification date)
 #           - compare file name
 #           - compare file content (byte by byte)
-#        Checksum recording now can handle duplicated files
-#           but it takes multiple iterations of analysis and update to complete
-#           impact is low because all it's doing is updating csv files
+#        Checksum validation takes multiple iterations of analysis and update to complete
 
 #Degree value must convert to radina before calculation
 #|a0 b0| |x|

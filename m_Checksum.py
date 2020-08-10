@@ -265,8 +265,8 @@ def validRecord(csvName, csvName1):#{0
             genTable = csv0[2]
             recordDir = csv1[0]
             genDir = csv0[0]
-            #res = dupRecord()
-            res = 1 #this is to handle duplicated files in record
+            res = dupRecord()
+            #res = 1 #this is to handle duplicated files in record
             if res == 0:#{3
                 print('Records contain duplicates, cannot update')
                 print('Recommend:')
@@ -291,15 +291,16 @@ def validRecord(csvName, csvName1):#{0
                         i.counter = i.counter + 1
                         cc = i.counter
                         if cc >= 0 and cc < len(recordTable):#{6
-                            lHash = recordTable[cc].key
-                            iHash = i.key
-                            lName = recordTable[cc].fileName
-                            iName = i.fileName
-                            lmTime = recordTable[cc].modTime
-                            imTime = i.modTime
-                            if lHash == iHash and lName != iName:#{7
-                                if recordTable[cc].toRename == 0 and i.toRename == 0 and\
-                                   recordTable[cc].toKeep == 0 and i.toKeep == 0:#{8
+                            if recordTable[cc].toRename == 0 and i.toRename == 0 and\
+                                recordTable[cc].toKeep == 0 and i.toKeep == 0 and\
+                                recordTable[cc].toReview == 0 and i.toReview == 0:#{7
+                                lHash = recordTable[cc].key
+                                iHash = i.key
+                                lName = recordTable[cc].fileName
+                                iName = i.fileName
+                                lmTime = recordTable[cc].modTime
+                                imTime = i.modTime
+                                if lHash == iHash and lName != iName:#{8
                                     #print(lName + ' => ' + iName)
                                     i.toRename = i.toRename + 1 #to rename on record
                                     recordTable[cc].toRename = recordTable[cc].toRename + 1
@@ -308,9 +309,7 @@ def validRecord(csvName, csvName1):#{0
                                     #print(gHash + ' = ' + lHash)
                                     renameCount = renameCount + 1
                                 #}8
-                            #}7
-                            elif lName == iName and lHash != iHash:#{7
-                                if recordTable[cc].toKeep == 0 and recordTable[cc].toRename == 0:#{8
+                                elif lName == iName and lHash != iHash:#{8
                                     i.toReview = i.toReview + 1 #to review
                                     recordTable[cc].toReview = recordTable[cc].toReview + 1
                                     if lmTime == imTime:#{9
@@ -321,18 +320,13 @@ def validRecord(csvName, csvName1):#{0
                                     #}9
                                     reviewCount = reviewCount + 1
                                 #}8
-                            #}7
-                            elif lHash == iHash and lName == iName:#{7
-                                if recordTable[cc].toKeep == 0 and i.toKeep == 0 and\
-                                   recordTable[cc].toRename == 0 and i.toRename == 0:#{8
+                                elif lHash == iHash and lName == iName:#{8
                                     i.toKeep = i.toKeep + 1
                                     recordTable[cc].toKeep = recordTable[cc].toKeep + 1
                                     keepCount = keepCount + 1
                                 #}8
-                            #}7
-                            else:#{7
-                                if lmTime == imTime and lHash != iHash and lName != iName:#{8
-                                    if recordTable[cc].toKeep == 0 and recordTable[cc].toRename == 0:#{9
+                                else:#{8
+                                    if lmTime == imTime and lHash != iHash and lName != iName:#{9
                                         i.toReview = i.toReview + 1
                                         recordTable[cc].toReview = recordTable[cc].toReview + 1
                                         toCorrupt.append(lName)
@@ -345,53 +339,17 @@ def validRecord(csvName, csvName1):#{0
                     counter = counter + 1
                     #print(str(counter))
                 #}4
-                #toRename = set(toRename)
-                #toRename = list(toRename)
+                    
+                #setRename = set(tuple(element) for element in toRename) #set of tuples
+                #toRename = []
+                #for i in setRename:
+                #    ti = list(i)
+                #    toRename.append(ti)
                 #toMod = set(toMod)
                 #toMod = list(toMod)
                 #toCorrupt = set(toCorrupt)
                 #toCorrupt = list(toCorrupt)
-                for i in recordTable:#{4
-                    if i.toKeep > 0 and (i.toReview > 0 or i.toRename > 0):#{5
-                        while i.fileName in toCorrupt:#{6
-                            toCorrupt.remove(i.fileName)
-                        #}6
-                        while i.fileName in toMod:#{6
-                            toMod.remove(i.fileName)
-                        #}6
-                        while [i.fileName, i.rename] in toRename:#{6
-                            toRename.remove([i.fileName, i.rename])
-                        #}6
-                        reviewCount = reviewCount - i.toReview
-                        renameCount = renameCount - i.toRename
-                        i.toReview = 0
-                        i.toRename = 0
-                    #}5
-                    elif i.toRename > 0 and i.toReview > 0:#{5
-                        while i.fileName in toCorrupt:#{6
-                            toCorrupt.remove(i.fileName)
-                        #}6
-                        while i.fileName in toMod:#{6
-                            toMod.remove(i.fileName)
-                        #}6
-                        reviewCount = reviewCount - i.toReview
-                        i.toReview = 0
-                    #}5
-                #}4
-                for i in genTable:#{4
-                    if i.toRename > 0:#{5
-                        isTrue = False
-                        for j in toRename:#{6
-                            if i.fileName in j:#{7
-                                isTrue = True
-                                break
-                            #}7
-                        #}6
-                        if isTrue == False:#{6
-                            i.toRename = 0
-                        #}6
-                    #}5
-                #}4
+
                 #'a' is to append
                 with open(cwd + delim + 'checksum_report.txt', 'a', encoding='utf8') as outputFile:#{4
                     outputFile.write(now + ' Checksum: updating ' + recordDir + ' record with ' + genDir + '\n')
