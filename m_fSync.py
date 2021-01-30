@@ -195,7 +195,7 @@ def filing(iMode, iCS):#{0
                 totalDstRemove = totalDstRemove + 1
             #}3
             except OSError:#{3
-                print('OSerror during file removal')
+                print('OSerror during file removal: ' + rmf)
                 continue
             #}3
             #print('Remove: ' + rmf)
@@ -208,7 +208,7 @@ def filing(iMode, iCS):#{0
                 totalDstRename = totalDstRename + 1
             #}3
             except OSError:#{3
-                print('OSerror during file rename')
+                print('OSerror during file rename: ' + rnf)
                 continue
             #}3
             #print('Rename: ' + rnf[0] + ' -> ' + rnf[1])
