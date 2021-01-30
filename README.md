@@ -11,7 +11,7 @@ So two separate files have same size and modification time, even if file name an
 the default filecmp.cmp function (shallow=True) still returns True.\
 The downside is for large files, it takes a long time to compare file content.
 
-Tested on Windows 8.1.\
+Tested on Windows 8.1 and 10.\
 May also work on Linux.
 
 Launch the application using command "python bobFileApp_tkinter_1_7.py" in terminal\
