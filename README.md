@@ -15,8 +15,7 @@ Tested on Windows 8.1 and 10.\
 May also work on Linux.
 
 Launch the application using command "python bobFileApp_tkinter_1_7.py" in terminal\
-In case of building an executable, please build with terminal attached because terminal is used heavily to display information.\
-Also make executable that requires admin access to run.
+In case of building an executable, please build with terminal attached because terminal is used heavily to display information.
 
 This program is best suited for backup and maintain personal files like documents, pictures, vidoes, etc.\
 **Features**
